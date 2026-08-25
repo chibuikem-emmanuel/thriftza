@@ -1,25 +1,33 @@
-// src/lib/api.ts
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com';
 
-export async function fetchApi(endpoint: string, options: RequestInit = {}) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
+export async function loginUser(credentials: Record<string, any>) {
+  const res = await fetch(`${API_BASE}/api/auth/login/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
   });
 
-  return response;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || data.message || 'Login failed');
+
+  if (data.access) localStorage.setItem('access_token', data.access);
+  if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+
+  return data;
 }
 
-// Alias export to prevent build errors where apiFetch is imported
-export const apiFetch = fetchApi;
+export async function registerUser(payload: Record<string, any>) {
+  const res = await fetch(`${API_BASE}/api/auth/register/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || data.message || 'Registration failed');
+
+  if (data.access) localStorage.setItem('access_token', data.access);
+  if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+
+  return data;
+}
