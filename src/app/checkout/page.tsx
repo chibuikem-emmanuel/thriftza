@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useStore, CartItem } from '@/store/useStore';
+import { useStore } from '@/store/useStore';
 import { fetchApi } from '@/lib/api';
 
 export default function CheckoutPage() {
@@ -37,7 +37,10 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * (item.quantity ?? 1),
+    0
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,11 +59,11 @@ export default function CheckoutPage() {
     try {
       const orderData = {
         customer: formData,
-        items: cart.map((item: any) => ({
+        items: cart.map((item) => ({
           id: item.id,
           title: item.title || item.name || 'Item',
           price: item.price,
-          quantity: item.quantity,
+          quantity: item.quantity ?? 1,
           size: item.selectedSize || item.size || '',
         })),
         total_amount: totalAmount,
@@ -187,9 +190,10 @@ export default function CheckoutPage() {
             <p className="text-zinc-500 text-sm">Your cart is empty.</p>
           ) : (
             <div className="space-y-4">
-              {cart.map((item: any, index: number) => {
+              {cart.map((item, index) => {
                 const itemTitle = item.title || item.name || 'Product';
                 const itemSize = item.selectedSize || item.size;
+                const quantity = item.quantity ?? 1;
                 return (
                   <div
                     key={index}
@@ -198,11 +202,11 @@ export default function CheckoutPage() {
                     <div>
                       <p className="font-bold text-zinc-900 dark:text-zinc-100">{itemTitle}</p>
                       <p className="text-xs text-zinc-500">
-                        Qty: {item.quantity} {itemSize ? `| Size: ${itemSize}` : ''}
+                        Qty: {quantity} {itemSize ? `| Size: ${itemSize}` : ''}
                       </p>
                     </div>
                     <p className="font-bold text-zinc-900 dark:text-zinc-100">
-                      ₦{(item.price * item.quantity).toLocaleString()}
+                      ₦{(item.price * quantity).toLocaleString()}
                     </p>
                   </div>
                 );

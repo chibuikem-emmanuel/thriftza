@@ -5,15 +5,18 @@ export interface CartItem {
   title?: string;
   name?: string;
   price: number;
-  quantity?: number;
+  quantity: number;
   image?: string;
   images?: string[];
   size?: string;
   selectedSize?: string;
   category?: string;
+  condition?: string;
 }
 
-export interface Product extends CartItem {}
+export interface Product extends CartItem {
+  condition: string;
+}
 
 export interface AppState {
   cart: CartItem[];
@@ -35,12 +38,12 @@ export const useStore = create<AppState>((set) => ({
   addToCart: (item) =>
     set((state) => {
       const existing = state.cart.find((i) => i.id === item.id);
-      const addedQty = item.quantity || 1;
+      const addedQty = item.quantity ?? 1;
       if (existing) {
         return {
           cart: state.cart.map((i) =>
             i.id === item.id
-              ? { ...i, quantity: (i.quantity || 1) + addedQty }
+              ? { ...i, quantity: (i.quantity ?? 1) + addedQty }
               : i
           ),
         };
@@ -57,7 +60,7 @@ export const useStore = create<AppState>((set) => ({
     set((state) => ({
       cart: state.cart
         .map((item) => (item.id === id ? { ...item, quantity } : item))
-        .filter((item) => (item.quantity || 0) > 0),
+        .filter((item) => item.quantity > 0),
     })),
 
   clearCart: () => set({ cart: [] }),
