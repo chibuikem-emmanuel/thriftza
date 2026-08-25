@@ -1,7 +1,7 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { useStore, Product } from '@/store/useStore';
 
@@ -14,22 +14,57 @@ export default function ProductCard({ product }: ProductCardProps) {
   const toggleFavorite = useStore((state) => state.toggleFavorite);
   const favorites = useStore((state) => state.favorites);
 
+  const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   const isFavorite = favorites.some((item) => item.id === product.id);
   const title = product.title || product.name || 'Product';
   const imageSrc = (product.images && product.images[0]) || product.image || '/placeholder.png';
+  const videoSrc = product.video || product.video_url;
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
 
   return (
-    <div className="group relative bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden flex flex-col justify-between transition hover:border-red-600/50">
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group relative bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden flex flex-col justify-between transition hover:border-red-600/50"
+    >
       <div className="relative aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
-        <Image
-          src={imageSrc}
-          alt={title}
-          fill
-          className="object-cover group-hover:scale-105 transition duration-300"
-        />
+        {videoSrc && isHovered ? (
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            className="object-cover group-hover:scale-105 transition duration-300"
+          />
+        )}
+
         <button
           onClick={() => toggleFavorite(product)}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition"
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition z-10"
           aria-label="Favorite"
         >
           <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-600 text-red-600' : ''}`} />

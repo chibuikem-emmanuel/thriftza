@@ -8,6 +8,8 @@ export interface CartItem {
   quantity?: number;
   image?: string;
   images?: string[];
+  video?: string;
+  video_url?: string;
   size?: string;
   selectedSize?: string;
   category?: string;
@@ -76,7 +78,16 @@ export const useStore = create<AppState>((set) => ({
     }),
 
   toggleTheme: () =>
-    set((state) => ({
-      theme: state.theme === 'light' ? 'dark' : 'light',
-    })),
+    set((state) => {
+      const newTheme = state.theme === 'light' ? 'dark' : 'light';
+      if (typeof window !== 'undefined') {
+        const root = document.documentElement;
+        if (newTheme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+      }
+      return { theme: newTheme };
+    }),
 }));
