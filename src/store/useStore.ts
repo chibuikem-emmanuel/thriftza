@@ -5,7 +5,7 @@ export interface CartItem {
   title?: string;
   name?: string;
   price: number;
-  quantity: number;
+  quantity?: number;
   image?: string;
   images?: string[];
   size?: string;
@@ -14,7 +14,17 @@ export interface CartItem {
   condition?: string;
 }
 
-export interface Product extends CartItem {
+export interface Product {
+  id: string | number;
+  title?: string;
+  name?: string;
+  price: number;
+  quantity?: number;
+  image?: string;
+  images?: string[];
+  size?: string;
+  selectedSize?: string;
+  category?: string;
   condition: string;
 }
 
@@ -60,7 +70,7 @@ export const useStore = create<AppState>((set) => ({
     set((state) => ({
       cart: state.cart
         .map((item) => (item.id === id ? { ...item, quantity } : item))
-        .filter((item) => item.quantity > 0),
+        .filter((item) => (item.quantity ?? 0) > 0),
     })),
 
   clearCart: () => set({ cart: [] }),
