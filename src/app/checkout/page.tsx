@@ -1,96 +1,125 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
-import { apiFetch } from '@/lib/api';
+import { fetchApi } from '@/lib/api';
 
 export default function CheckoutPage() {
   const cart = useStore((state) => state.cart);
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const clearCart = useStore((state) => state.clearCart);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    full_name: '',
     email: '',
     phone: '',
     address: '',
     city: '',
-    postalCode: '',
+    state: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Prefill profile data if available
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        const user = JSON.parse(savedUser);
+        setFormData((prev) => ({
+          ...prev,
+          full_name: user.full_name || '',
+          email: user.email || '',
+          phone: user.whatsapp_number || '',
+        }));
+      } catch (e) {
+        console.error('Error parsing user data', e);
+      }
+    }
+  }, []);
+
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePayment = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cart.length === 0) {
+      setError('Your cart is empty.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const payload = {
-        customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
-        customer_email: formData.email,
-        customer_phone: formData.phone,
+      const orderData = {
+        customer: formData,
         items: cart.map((item) => ({
-          product_name: item.name,
+          id: item.id,
+          title: item.title,
+          price: item.price,
           quantity: item.quantity,
-          unit_price: item.price,
+          size: item.selectedSize,
         })),
+        total_amount: totalAmount,
       };
 
-      const response = await apiFetch('/orders/checkout/', {
+      const res = await fetchApi('/api/checkout/', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(orderData),
       });
 
-      if (response.checkout_url) {
-        window.location.href = response.checkout_url;
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || data.message || 'Payment initiation failed.');
+      }
+
+      if (data.checkout_url) {
+        clearCart();
+        window.location.href = data.checkout_url;
       } else {
-        throw new Error('Failed to retrieve checkout URL.');
+        throw new Error('Checkout URL was not returned by backend.');
       }
     } catch (err: any) {
-      setError(err.message || 'Payment initialization failed. Please try again.');
+      setError(err.message || 'Failed to complete checkout.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
-      <div className="space-y-6">
-        <h1 className="text-3xl font-black uppercase">Shipping Information</h1>
-        
-        {error && (
-          <div className="bg-red-500/10 border border-red-600 text-red-500 p-3 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
+    <div className="max-w-4xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-black uppercase mb-8 text-zinc-900 dark:text-zinc-100">
+        Checkout
+      </h1>
 
-        <form onSubmit={handlePayment} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="firstName"
-              placeholder="First Name"
-              required
-              value={formData.firstName}
-              onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-            />
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-              required
-              value={formData.lastName}
-              onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-            />
-          </div>
+      {error && (
+        <div className="mb-6 bg-red-500/10 border border-red-600 text-red-500 p-4 rounded-xl text-sm font-bold">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Shipping Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h2 className="text-lg font-bold uppercase text-zinc-800 dark:text-zinc-200">
+            Delivery Information
+          </h2>
+
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Full Name"
+            required
+            value={formData.full_name}
+            onChange={handleChange}
+            className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
+          />
+
           <input
             type="email"
             name="email"
@@ -98,26 +127,29 @@ export default function CheckoutPage() {
             required
             value={formData.email}
             onChange={handleChange}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+            className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
           />
+
           <input
             type="tel"
             name="phone"
-            placeholder="Phone Number (e.g., 08012345678)"
+            placeholder="WhatsApp / Phone Number"
             required
             value={formData.phone}
             onChange={handleChange}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+            className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
           />
+
           <input
             type="text"
             name="address"
-            placeholder="Address"
+            placeholder="Street Address"
             required
             value={formData.address}
             onChange={handleChange}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+            className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
           />
+
           <div className="grid grid-cols-2 gap-4">
             <input
               type="text"
@@ -126,42 +158,58 @@ export default function CheckoutPage() {
               required
               value={formData.city}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+              className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
             />
             <input
               type="text"
-              name="postalCode"
-              placeholder="Postal Code"
-              value={formData.postalCode}
+              name="state"
+              placeholder="State"
+              required
+              value={formData.state}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+              className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-red-600"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || cart.length === 0}
-            className="w-full bg-red-600 text-white font-bold py-4 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-xl uppercase transition disabled:opacity-50"
           >
-            {loading ? 'PROCESSING...' : `PAY NOW (₦${total.toLocaleString()})`}
+            {loading ? 'PROCESSING PAYMENT...' : `PAY ₦${totalAmount.toLocaleString()}`}
           </button>
         </form>
-      </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl h-fit">
-        <h2 className="text-xl font-bold uppercase mb-4 border-b border-zinc-800 pb-3">
-          Items ({cart.length})
-        </h2>
-        <div className="space-y-4 max-h-96 overflow-y-auto">
-          {cart.map((item) => (
-            <div key={item.id} className="flex justify-between items-center">
-              <div>
-                <p className="font-bold">{item.name}</p>
-                <p className="text-xs text-zinc-400">Qty: {item.quantity}</p>
+        {/* Order Summary */}
+        <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6 rounded-2xl h-fit">
+          <h2 className="text-lg font-bold uppercase mb-4 text-zinc-800 dark:text-zinc-200">
+            Order Summary
+          </h2>
+
+          {cart.length === 0 ? (
+            <p className="text-zinc-500 text-sm">Your cart is empty.</p>
+          ) : (
+            <div className="space-y-4">
+              {cart.map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                  <div>
+                    <p className="font-bold text-zinc-900 dark:text-zinc-100">{item.title}</p>
+                    <p className="text-xs text-zinc-500">
+                      Qty: {item.quantity} {item.selectedSize ? `| Size: ${item.selectedSize}` : ''}
+                    </p>
+                  </div>
+                  <p className="font-bold text-zinc-900 dark:text-zinc-100">
+                    ₦{(item.price * item.quantity).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+
+              <div className="pt-2 flex justify-between font-black text-lg text-zinc-900 dark:text-zinc-100">
+                <span>Total:</span>
+                <span className="text-red-600">₦{totalAmount.toLocaleString()}</span>
               </div>
-              <span className="font-mono">₦{(item.price * item.quantity).toLocaleString()}</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

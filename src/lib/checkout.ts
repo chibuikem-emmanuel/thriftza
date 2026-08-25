@@ -1,31 +1,20 @@
-import { apiFetch } from './api';
+import { fetchApi } from './api';
 
-interface CartItem {
-  product_name: string;
-  quantity: number;
-  unit_price: number;
-}
+export async function initiateCheckout(orderPayload: any) {
+  const res = await fetchApi('/api/checkout/', {
+    method: 'POST',
+    body: JSON.stringify(orderPayload),
+  });
 
-interface CheckoutPayload {
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  items: CartItem[];
-}
+  const data = await res.json();
 
-export async function handleCheckout(payload: CheckoutPayload) {
-  try {
-    const data = await apiFetch('/orders/checkout/', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-
-    if (data.checkout_url) {
-      // Redirect customer to Bachs Pay Hosted Page
-      window.location.href = data.checkout_url;
-    }
-  } catch (error: any) {
-    console.error('Checkout error:', error.message);
-    alert(error.message || 'Failed to initialize payment');
+  if (!res.ok) {
+    throw new Error(data.detail || data.message || 'Checkout failed');
   }
+
+  if (data.checkout_url) {
+    return data.checkout_url;
+  }
+
+  throw new Error('Checkout URL not provided by the server');
 }
