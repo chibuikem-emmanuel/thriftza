@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com';
+import { loginUser } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,29 +17,10 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail || data.message || 'Invalid credentials.');
-      }
-
-      if (data.access) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
-
-        window.dispatchEvent(new Event('auth-change'));
-        router.push('/account');
-        router.refresh();
-      }
+      await loginUser(formData);
+      window.dispatchEvent(new Event('auth-change'));
+      router.push('/account');
+      router.refresh();
     } catch (err: any) {
       setError(err.message || 'Failed to sign in.');
     } finally {

@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com';
+import { registerUser } from '@/lib/api';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -27,31 +26,10 @@ export default function SignupPage() {
     setError('');
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        const firstKey = Object.keys(data)[0];
-        const errMsg = Array.isArray(data[firstKey])
-          ? `${firstKey}: ${data[firstKey][0]}`
-          : data.message || 'Registration failed';
-        throw new Error(errMsg);
-      }
-
-      if (data.access) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
-        localStorage.setItem('user', JSON.stringify(data.user));
-
-        window.dispatchEvent(new Event('auth-change'));
-        router.push('/account');
-        router.refresh();
-      }
+      await registerUser(formData);
+      window.dispatchEvent(new Event('auth-change'));
+      router.push('/account');
+      router.refresh();
     } catch (err: any) {
       setError(err.message || 'Registration failed.');
     } finally {
