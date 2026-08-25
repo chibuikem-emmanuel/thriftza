@@ -62,10 +62,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden flex flex-col justify-between transition hover:border-red-600/50">
       
-      {/* Media Window */}
+      {/* Media Box */}
       <div className="relative aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
         
-        {/* Cover Image */}
+        {/* Product Cover Image */}
         <Image
           src={imageSrc}
           alt={title}
@@ -75,7 +75,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           }`}
         />
 
-        {/* Floating "Watch Video" Action Button (Visible on Hover if Video Exists) */}
+        {/* Watch Video Button (Shown on Card Hover if video is attached) */}
         {videoSrc && !isPreviewOpen && (
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center pointer-events-none">
             <button
@@ -91,7 +91,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Video Preview Overlay Player */}
+        {/* Video Player Modal Layer */}
         {videoSrc && isPreviewOpen && (
           <div className="absolute inset-0 bg-black z-20 flex items-center justify-center">
             <video
@@ -103,10 +103,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               className="w-full h-full object-cover"
             />
 
-            {/* Video Player Overlay Controls */}
+            {/* Video Header Controls */}
             <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-30">
               <span className="text-[10px] font-bold uppercase tracking-wider bg-red-600 text-white px-2 py-1 rounded">
-                Preview
+                Video Preview
               </span>
 
               <button
@@ -118,6 +118,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </button>
             </div>
 
+            {/* Video Footer Controls */}
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-30">
               <button
                 onClick={handlePlayPause}
@@ -138,7 +139,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Favorite Button */}
+        {/* Favorite Action Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -151,7 +152,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
       </div>
 
-      {/* Details Footer */}
+      {/* Card Body */}
       <div className="p-4 flex flex-col justify-between flex-1">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-red-600">

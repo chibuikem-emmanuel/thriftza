@@ -1,5 +1,12 @@
 import { create } from 'zustand';
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
 export interface CartItem {
   id: string | number;
   title?: string;
@@ -25,18 +32,23 @@ export interface AppState {
   cart: CartItem[];
   favorites: CartItem[];
   theme: 'light' | 'dark';
+  user: User | null;
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string | number) => void;
   updateQuantity: (id: string | number, quantity: number) => void;
   clearCart: () => void;
   toggleFavorite: (item: CartItem) => void;
   toggleTheme: () => void;
+  initTheme: () => void;
+  login: (userData: User) => void;
+  logout: () => void;
 }
 
-export const useStore = create<AppState>((set) => ({
+export const useStore = create<AppState>((set, get) => ({
   cart: [],
   favorites: [],
   theme: 'dark',
+  user: null,
 
   addToCart: (item) =>
     set((state) => {
@@ -77,17 +89,27 @@ export const useStore = create<AppState>((set) => ({
       return { favorites: [...state.favorites, item] };
     }),
 
-  toggleTheme: () =>
-    set((state) => {
-      const newTheme = state.theme === 'light' ? 'dark' : 'light';
-      if (typeof window !== 'undefined') {
-        const root = document.documentElement;
-        if (newTheme === 'dark') {
-          root.classList.add('dark');
-        } else {
-          root.classList.remove('dark');
-        }
+  initTheme: () => {
+    if (typeof window !== 'undefined') {
+      const isDark = document.documentElement.classList.contains('dark');
+      set({ theme: isDark ? 'dark' : 'light' });
+    }
+  },
+
+  toggleTheme: () => {
+    const currentTheme = get().theme;
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    if (typeof window !== 'undefined') {
+      const root = document.documentElement;
+      if (newTheme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
       }
-      return { theme: newTheme };
-    }),
+    }
+    set({ theme: newTheme });
+  },
+
+  login: (userData) => set({ user: userData }),
+  logout: () => set({ user: null }),
 }));
