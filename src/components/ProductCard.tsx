@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Heart, ShoppingBag, Play, Pause, Volume2, VolumeX, X, Maximize2 } from 'lucide-react';
+import { Heart, ShoppingBag, Play, Pause, Volume2, VolumeX, X } from 'lucide-react';
 import { useStore, Product } from '@/store/useStore';
 
 interface ProductCardProps {
@@ -14,8 +14,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const toggleFavorite = useStore((state) => state.toggleFavorite);
   const favorites = useStore((state) => state.favorites);
 
-  const [isCardHovered, setIsCardHovered] = useState(false);
-  const [isFullModalOpen, setIsFullModalOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -27,24 +27,24 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageSrc = (product.images && product.images[0]) || product.image || '/placeholder.png';
   const videoSrc = product.video || product.video_url;
 
-  // Handle auto-play preview on hover
+  // Handle silent background preview playback on card hover
   useEffect(() => {
-    if (videoSrc && hoverVideoRef.current && !isFullModalOpen) {
-      if (isCardHovered) {
+    if (videoSrc && hoverVideoRef.current && !isVideoModalOpen) {
+      if (isHovered) {
         hoverVideoRef.current.play().catch(() => {});
       } else {
         hoverVideoRef.current.pause();
         hoverVideoRef.current.currentTime = 0;
       }
     }
-  }, [isCardHovered, videoSrc, isFullModalOpen]);
+  }, [isHovered, videoSrc, isVideoModalOpen]);
 
-  // Handle full modal video playback
+  // Handle dedicated playback inside the modal viewer
   useEffect(() => {
-    if (isFullModalOpen && modalVideoRef.current) {
+    if (isVideoModalOpen && modalVideoRef.current) {
       modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
-  }, [isFullModalOpen]);
+  }, [isVideoModalOpen]);
 
   const handlePlayPause = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -65,27 +65,33 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsMuted(!isMuted);
   };
 
+  const handleOpenVideoModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVideoModalOpen(true);
+  };
+
   return (
     <>
       <div
-        onMouseEnter={() => setIsCardHovered(true)}
-        onMouseLeave={() => setIsCardHovered(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className="group relative bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden flex flex-col justify-between transition hover:border-red-600/50"
       >
-        {/* Media Container */}
+        {/* Media Window */}
         <div className="relative aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
           
-          {/* Static Cover Image */}
+          {/* Static Image */}
           <Image
             src={imageSrc}
             alt={title}
             fill
             className={`object-cover transition duration-300 ${
-              videoSrc && isCardHovered ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
+              videoSrc && isHovered ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
             }`}
           />
 
-          {/* Hover Video Preview Layer */}
+          {/* Hover Video Preview Loop */}
           {videoSrc && (
             <video
               ref={hoverVideoRef}
@@ -94,20 +100,18 @@ export default function ProductCard({ product }: ProductCardProps) {
               loop
               playsInline
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-                isCardHovered ? 'opacity-100 scale-105' : 'opacity-0'
+                isHovered ? 'opacity-100 scale-105' : 'opacity-0'
               }`}
             />
           )}
 
-          {/* "Watch Video" Action Button (Appears on Hover when Video Exists) */}
+          {/* Direct "Watch Video" Interactive Button (Appears on Hover) */}
           {videoSrc && (
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center z-20">
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center z-30 pointer-events-auto">
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFullModalOpen(true);
-                }}
-                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase px-4 py-2.5 rounded-full shadow-xl transform translate-y-2 group-hover:translate-y-0 transition duration-300"
+                type="button"
+                onClick={handleOpenVideoModal}
+                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs uppercase px-5 py-3 rounded-full shadow-2xl transform translate-y-3 group-hover:translate-y-0 transition duration-300 cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-white" />
                 Watch Video
@@ -115,27 +119,28 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Video Indicator Badge */}
-          {videoSrc && !isCardHovered && (
-            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white px-2.5 py-1 rounded-full z-10 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+          {/* Video Indicator Pill */}
+          {videoSrc && !isHovered && (
+            <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white px-2.5 py-1 rounded-full z-10 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
               <Play className="w-3 h-3 fill-white" /> Video
             </span>
           )}
 
           {/* Favorite Action Button */}
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               toggleFavorite(product);
             }}
-            className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition z-30"
+            className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition z-40"
             aria-label="Favorite"
           >
             <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-600 text-red-600' : ''}`} />
           </button>
         </div>
 
-        {/* Card Body */}
+        {/* Details Footer */}
         <div className="p-4 flex flex-col justify-between flex-1">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-red-600">
@@ -151,6 +156,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               ₦{product.price.toLocaleString()}
             </span>
             <button
+              type="button"
               onClick={() => addToCart(product)}
               className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition"
               aria-label="Add to cart"
@@ -161,28 +167,34 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Dedicated Video Modal Viewer */}
-      {videoSrc && isFullModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative w-full max-w-lg bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-800">
-            
-            {/* Header Controls */}
+      {/* Video Modal Screen */}
+      {videoSrc && isVideoModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setIsVideoModalOpen(false)}
+        >
+          <div 
+            className="relative w-full max-w-lg bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Controls Bar Header */}
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-30">
               <span className="text-xs font-bold uppercase tracking-wider bg-red-600 text-white px-3 py-1 rounded-full">
-                Product Showcase
+                Video Preview
               </span>
 
               <button
-                onClick={() => setIsFullModalOpen(false)}
+                type="button"
+                onClick={() => setIsVideoModalOpen(false)}
                 className="p-2 rounded-full bg-black/60 text-white hover:bg-red-600 transition"
-                aria-label="Close Modal"
+                aria-label="Close Preview"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Main Video Screen */}
-            <div className="relative aspect-square w-full">
+            {/* Video Canvas */}
+            <div className="relative aspect-square w-full bg-black">
               <video
                 ref={modalVideoRef}
                 src={videoSrc}
@@ -193,7 +205,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               />
             </div>
 
-            {/* Footer Bar & Player Controls */}
+            {/* Modal Footer Controls */}
             <div className="p-4 bg-zinc-950 flex items-center justify-between">
               <div>
                 <h4 className="font-bold text-white text-sm">{title}</h4>
@@ -202,23 +214,28 @@ export default function ProductCard({ product }: ProductCardProps) {
 
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={handlePlayPause}
                   className="p-2.5 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition"
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white" />}
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleToggleMute}
                   className="p-2.5 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition"
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => {
                     addToCart(product);
-                    setIsFullModalOpen(false);
+                    setIsVideoModalOpen(false);
                   }}
                   className="ml-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase rounded-xl transition flex items-center gap-2"
                 >
