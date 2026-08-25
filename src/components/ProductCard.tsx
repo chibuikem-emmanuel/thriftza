@@ -5,6 +5,10 @@ import Image from 'next/image';
 import { Heart, ShoppingBag, Play, Pause, Volume2, VolumeX, X } from 'lucide-react';
 import { useStore, Product } from '@/store/useStore';
 
+// Fallback sample MP4 video so EVERY card shows the feature if video property is missing in data
+const DEFAULT_SAMPLE_VIDEO =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+
 interface ProductCardProps {
   product: Product;
 }
@@ -25,11 +29,13 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isFavorite = favorites.some((item) => item.id === product.id);
   const title = product.title || product.name || 'Product';
   const imageSrc = (product.images && product.images[0]) || product.image || '/placeholder.png';
-  const videoSrc = product.video || product.video_url;
+  
+  // ALWAYS resolves to a video source
+  const videoSrc = product.video || product.video_url || DEFAULT_SAMPLE_VIDEO;
 
-  // Handle silent background preview playback on card hover
+  // Background hover loop logic
   useEffect(() => {
-    if (videoSrc && hoverVideoRef.current && !isVideoModalOpen) {
+    if (hoverVideoRef.current && !isVideoModalOpen) {
       if (isHovered) {
         hoverVideoRef.current.play().catch(() => {});
       } else {
@@ -37,9 +43,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         hoverVideoRef.current.currentTime = 0;
       }
     }
-  }, [isHovered, videoSrc, isVideoModalOpen]);
+  }, [isHovered, isVideoModalOpen]);
 
-  // Handle dedicated playback inside the modal viewer
+  // Modal player logic
   useEffect(() => {
     if (isVideoModalOpen && modalVideoRef.current) {
       modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
@@ -81,48 +87,44 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Media Window */}
         <div className="relative aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
           
-          {/* Static Image */}
+          {/* Cover Image */}
           <Image
             src={imageSrc}
             alt={title}
             fill
             className={`object-cover transition duration-300 ${
-              videoSrc && isHovered ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
+              isHovered ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
             }`}
           />
 
           {/* Hover Video Preview Loop */}
-          {videoSrc && (
-            <video
-              ref={hoverVideoRef}
-              src={videoSrc}
-              muted
-              loop
-              playsInline
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-                isHovered ? 'opacity-100 scale-105' : 'opacity-0'
-              }`}
-            />
-          )}
+          <video
+            ref={hoverVideoRef}
+            src={videoSrc}
+            muted
+            loop
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+              isHovered ? 'opacity-100 scale-105' : 'opacity-0'
+            }`}
+          />
 
-          {/* Direct "Watch Video" Interactive Button (Appears on Hover) */}
-          {videoSrc && (
-            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center z-30 pointer-events-auto">
-              <button
-                type="button"
-                onClick={handleOpenVideoModal}
-                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs uppercase px-5 py-3 rounded-full shadow-2xl transform translate-y-3 group-hover:translate-y-0 transition duration-300 cursor-pointer"
-              >
-                <Play className="w-4 h-4 fill-white" />
-                Watch Video
-              </button>
-            </div>
-          )}
+          {/* ALWAYS VISIBLE ON HOVER: "Watch Video" Button */}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center z-30 pointer-events-auto">
+            <button
+              type="button"
+              onClick={handleOpenVideoModal}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs uppercase px-5 py-3 rounded-full shadow-2xl transform translate-y-3 group-hover:translate-y-0 transition duration-300 cursor-pointer"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              Watch Video
+            </button>
+          </div>
 
-          {/* Video Indicator Pill */}
-          {videoSrc && !isHovered && (
+          {/* Permanent Video Pill Badge */}
+          {!isHovered && (
             <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white px-2.5 py-1 rounded-full z-10 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <Play className="w-3 h-3 fill-white" /> Video
+              <Play className="w-3 h-3 fill-white" /> Video Available
             </span>
           )}
 
@@ -167,8 +169,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Video Modal Screen */}
-      {videoSrc && isVideoModalOpen && (
+      {/* Full Video Player Modal Screen */}
+      {isVideoModalOpen && (
         <div 
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setIsVideoModalOpen(false)}
@@ -177,7 +179,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="relative w-full max-w-lg bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-800"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Controls Bar Header */}
+            {/* Modal Header */}
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-30">
               <span className="text-xs font-bold uppercase tracking-wider bg-red-600 text-white px-3 py-1 rounded-full">
                 Video Preview
@@ -205,7 +207,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               />
             </div>
 
-            {/* Modal Footer Controls */}
+            {/* Controls Footer */}
             <div className="p-4 bg-zinc-950 flex items-center justify-between">
               <div>
                 <h4 className="font-bold text-white text-sm">{title}</h4>
