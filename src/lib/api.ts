@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com';
+const API_BASE = process.env.API_URL || 'https://thriftza-back-8vlw.onrender.com';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
