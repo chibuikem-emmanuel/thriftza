@@ -14,17 +14,8 @@ export interface CartItem {
   condition?: string;
 }
 
-export interface Product {
+export interface Product extends CartItem {
   id: string | number;
-  title?: string;
-  name?: string;
-  price: number;
-  quantity?: number;
-  image?: string;
-  images?: string[];
-  size?: string;
-  selectedSize?: string;
-  category?: string;
   condition: string;
 }
 

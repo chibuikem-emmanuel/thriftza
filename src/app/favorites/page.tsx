@@ -1,6 +1,6 @@
 'use client';
 
-import { useStore } from '@/store/useStore';
+import { useStore, Product } from '@/store/useStore';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
 
@@ -30,15 +30,20 @@ export default function FavoritesPage() {
         Saved Items ({favorites.length})
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {favorites.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={{
-              ...product,
-              condition: product.condition || 'Used - Good',
-            }}
-          />
-        ))}
+        {favorites.map((product) => {
+          const formattedProduct: Product = {
+            ...product,
+            id: String(product.id),
+            condition: product.condition || 'Used - Good',
+          };
+
+          return (
+            <ProductCard
+              key={product.id}
+              product={formattedProduct}
+            />
+          );
+        })}
       </div>
     </div>
   );
