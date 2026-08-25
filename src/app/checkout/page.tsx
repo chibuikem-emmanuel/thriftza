@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useStore } from '@/store/useStore';
+import { useStore, CartItem } from '@/store/useStore';
 import { fetchApi } from '@/lib/api';
 
 export default function CheckoutPage() {
@@ -20,7 +20,6 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Prefill profile data if available
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -57,12 +56,12 @@ export default function CheckoutPage() {
     try {
       const orderData = {
         customer: formData,
-        items: cart.map((item) => ({
+        items: cart.map((item: any) => ({
           id: item.id,
-          title: item.title,
+          title: item.title || item.name || 'Item',
           price: item.price,
           quantity: item.quantity,
-          size: item.selectedSize,
+          size: item.selectedSize || item.size || '',
         })),
         total_amount: totalAmount,
       };
@@ -79,7 +78,7 @@ export default function CheckoutPage() {
       }
 
       if (data.checkout_url) {
-        clearCart();
+        if (clearCart) clearCart();
         window.location.href = data.checkout_url;
       } else {
         throw new Error('Checkout URL was not returned by backend.');
@@ -104,7 +103,6 @@ export default function CheckoutPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Shipping Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <h2 className="text-lg font-bold uppercase text-zinc-800 dark:text-zinc-200">
             Delivery Information
@@ -180,7 +178,6 @@ export default function CheckoutPage() {
           </button>
         </form>
 
-        {/* Order Summary */}
         <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6 rounded-2xl h-fit">
           <h2 className="text-lg font-bold uppercase mb-4 text-zinc-800 dark:text-zinc-200">
             Order Summary
@@ -190,19 +187,26 @@ export default function CheckoutPage() {
             <p className="text-zinc-500 text-sm">Your cart is empty.</p>
           ) : (
             <div className="space-y-4">
-              {cart.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm border-b border-zinc-200 dark:border-zinc-800 pb-3">
-                  <div>
-                    <p className="font-bold text-zinc-900 dark:text-zinc-100">{item.title}</p>
-                    <p className="text-xs text-zinc-500">
-                      Qty: {item.quantity} {item.selectedSize ? `| Size: ${item.selectedSize}` : ''}
+              {cart.map((item: any, index: number) => {
+                const itemTitle = item.title || item.name || 'Product';
+                const itemSize = item.selectedSize || item.size;
+                return (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center text-sm border-b border-zinc-200 dark:border-zinc-800 pb-3"
+                  >
+                    <div>
+                      <p className="font-bold text-zinc-900 dark:text-zinc-100">{itemTitle}</p>
+                      <p className="text-xs text-zinc-500">
+                        Qty: {item.quantity} {itemSize ? `| Size: ${itemSize}` : ''}
+                      </p>
+                    </div>
+                    <p className="font-bold text-zinc-900 dark:text-zinc-100">
+                      ₦{(item.price * item.quantity).toLocaleString()}
                     </p>
                   </div>
-                  <p className="font-bold text-zinc-900 dark:text-zinc-100">
-                    ₦{(item.price * item.quantity).toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
 
               <div className="pt-2 flex justify-between font-black text-lg text-zinc-900 dark:text-zinc-100">
                 <span>Total:</span>
