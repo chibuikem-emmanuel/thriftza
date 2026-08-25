@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, Play } from 'lucide-react';
 import { useStore, Product } from '@/store/useStore';
 
 interface ProductCardProps {
@@ -15,6 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const favorites = useStore((state) => state.favorites);
 
   const [isHovered, setIsHovered] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const isFavorite = favorites.some((item) => item.id === product.id);
@@ -22,49 +23,67 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageSrc = (product.images && product.images[0]) || product.image || '/placeholder.png';
   const videoSrc = product.video || product.video_url;
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (videoRef.current) {
+  useEffect(() => {
+    if (isHovered && videoRef.current && videoSrc) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Video play interrupted or muted autoplay blocked:', err);
+        });
+      }
+    } else if (!isHovered && videoRef.current && videoSrc) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
-  };
+  }, [isHovered, videoSrc]);
 
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden flex flex-col justify-between transition hover:border-red-600/50"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
-        {videoSrc && isHovered ? (
+        {/* Static Cover Image */}
+        <Image
+          src={imageSrc}
+          alt={title}
+          fill
+          className={`object-cover transition duration-300 ${
+            videoSrc && isHovered && isVideoLoaded ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
+          }`}
+        />
+
+        {/* Video Preview Layer */}
+        {videoSrc && (
           <video
             ref={videoRef}
             src={videoSrc}
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Image
-            src={imageSrc}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-105 transition duration-300"
+            preload="metadata"
+            onLoadedData={() => setIsVideoLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+              isHovered && isVideoLoaded ? 'opacity-100 scale-105' : 'opacity-0 pointer-events-none'
+            }`}
           />
         )}
 
+        {/* Video Indicator Badge */}
+        {videoSrc && !isHovered && (
+          <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white p-1.5 rounded-full z-10">
+            <Play className="w-3 h-3 fill-white" />
+          </span>
+        )}
+
+        {/* Favorite Button */}
         <button
-          onClick={() => toggleFavorite(product)}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFavorite(product);
+          }}
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 hover:text-red-600 transition z-20"
           aria-label="Favorite"
         >
           <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-600 text-red-600' : ''}`} />
