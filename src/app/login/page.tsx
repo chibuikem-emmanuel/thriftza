@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com';
+
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -16,7 +18,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+      const res = await fetch(`${API_BASE}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -35,7 +37,6 @@ export default function LoginPage() {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
 
-        // Notify Navbar instantly and force Next.js router sync
         window.dispatchEvent(new Event('auth-change'));
         router.push('/account');
         router.refresh();
