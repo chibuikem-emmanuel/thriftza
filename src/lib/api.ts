@@ -20,3 +20,6 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
   return response;
 }
+
+// Alias export to prevent build errors where apiFetch is imported
+export const apiFetch = fetchApi;
