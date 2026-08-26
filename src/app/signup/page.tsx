@@ -9,11 +9,12 @@ import { useStore } from '@/store/useStore';
 export default function SignupPage() {
   const router = useRouter();
   const setUser = useStore((state) => state.setUser);
-  
+
   const [formData, setFormData] = useState({
-    full_name: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    whatsapp_number: '',
+    phone_number: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
@@ -28,17 +29,13 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
-    const nameParts = formData.full_name.trim().split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
-
     try {
       const response = await registerUser({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
-        first_name: firstName,
-        last_name: lastName,
-        phone_number: formData.whatsapp_number,
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        phone_number: formData.phone_number.trim(),
       });
 
       if (response?.user) {
@@ -67,15 +64,27 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="full_name"
-            placeholder="Full Name"
-            required
-            value={formData.full_name}
-            onChange={handleChange}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              name="first_name"
+              placeholder="First Name"
+              required
+              value={formData.first_name}
+              onChange={handleChange}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last Name"
+              required
+              value={formData.last_name}
+              onChange={handleChange}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+            />
+          </div>
+
           <input
             type="email"
             name="email"
@@ -85,33 +94,37 @@ export default function SignupPage() {
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
+
           <input
             type="tel"
-            name="whatsapp_number"
-            placeholder="WhatsApp Phone Number (e.g., 08012345678)"
+            name="phone_number"
+            placeholder="WhatsApp Phone Number (e.g. 08012345678)"
             required
-            value={formData.whatsapp_number}
+            value={formData.phone_number}
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
+
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Password (min 8 characters)"
             required
             minLength={8}
             value={formData.password}
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 font-bold py-3 rounded-lg text-white hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full bg-red-600 font-bold py-3 rounded-lg text-white hover:bg-red-700 transition disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'CREATING...' : 'CREATE ACCOUNT'}
           </button>
         </form>
+
         <p className="text-center text-sm text-zinc-400 mt-6">
           Already have an account?{' '}
           <Link href="/login" className="text-red-500 font-bold hover:underline">

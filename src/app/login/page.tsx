@@ -9,7 +9,7 @@ import { useStore } from '@/store/useStore';
 export default function LoginPage() {
   const router = useRouter();
   const setUser = useStore((state) => state.setUser);
-  
+
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,7 +20,10 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await loginUser(formData);
+      const response = await loginUser({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
 
       if (response?.user) {
         setUser(response.user);
@@ -30,7 +33,7 @@ export default function LoginPage() {
       router.push('/account');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in.');
+      setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -67,13 +70,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 font-bold py-3 rounded-lg text-white hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full bg-red-600 font-bold py-3 rounded-lg text-white hover:bg-red-700 transition disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'SIGNING IN...' : 'SIGN IN'}
           </button>
         </form>
         <p className="text-center text-sm text-zinc-400 mt-6">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/signup" className="text-red-500 font-bold hover:underline">
             Sign Up
           </Link>
