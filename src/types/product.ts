@@ -1,19 +1,14 @@
 export interface Product {
-  id: string | number;
+  id: string;
   name: string;
   price: number;
-  image?: string;
-  category?: string;
-  size?: string;
-  description?: string;
-  quantity?: number;
+  category: string;
+  condition: string;
+  size: string;
+  images: string[];
+  videoUrl?: string;
 }
 
-export interface User {
-  id?: string | number;
-  email: string;
-  first_name?: string;
-  last_name?: string;
-  name?: string;
-  phone_number?: string;
+export interface CartItem extends Product {
+  quantity: number;
 }
