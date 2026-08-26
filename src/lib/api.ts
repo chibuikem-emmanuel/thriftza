@@ -12,13 +12,23 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   };
 
   const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const response = await fetch(`${API_BASE}${formattedEndpoint}`, { ...options, headers });
+
+  const response = await fetch(`${API_BASE}${formattedEndpoint}`, {
+    ...options,
+    headers,
+  });
+
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg = data.detail || data.message || Object.values(data).flat().join(' ') || 'An error occurred';
+    const errorMsg =
+      data.detail ||
+      data.message ||
+      (typeof data === 'object' ? Object.values(data).flat().join(' ') : null) ||
+      'An error occurred';
     throw new Error(errorMsg);
   }
+
   return data;
 }
 
@@ -37,16 +47,19 @@ export async function registerUser(payload: {
   if (typeof window !== 'undefined' && data.access) {
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('refresh_token', data.refresh);
+    if (data.user) {
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
   }
+
   return data;
 }
 
 export async function loginUser(credentials: { email: string; password: string }) {
-  // Django JWT TokenObtainPairView expects 'email' or 'username' depending on USERNAME_FIELD
   const data = await fetchApi('/api/auth/login/', {
     method: 'POST',
     body: JSON.stringify({
-      username: credentials.email, // Passing email as username for Django
+      username: credentials.email,
       password: credentials.password,
     }),
   });
@@ -54,7 +67,11 @@ export async function loginUser(credentials: { email: string; password: string }
   if (typeof window !== 'undefined' && data.access) {
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('refresh_token', data.refresh);
+    if (data.user) {
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
   }
+
   return data;
 }
 
@@ -62,4 +79,13 @@ export async function getCurrentUser() {
   return await fetchApi('/api/auth/me/', {
     method: 'GET',
   });
+}
+
+export function logoutUser() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('auth-change'));
+  }
 }
