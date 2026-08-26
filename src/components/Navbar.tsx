@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useStore } from '@/store/useStore';
+import { useStore, User as UserType } from '@/store/useStore';
 import { ShoppingBag, Heart, Sun, Moon, User, LogOut, UserCheck } from 'lucide-react';
 import AuthModal from '@/components/AuthModal';
 
@@ -10,7 +10,7 @@ export default function Navbar() {
   const cart = useStore((state) => state.cart);
   const favorites = useStore((state) => state.favorites);
   const theme = useStore((state) => state.theme);
-  const user = useStore((state) => state.user);
+  const user = useStore((state) => state.user) as UserType | null;
   const logout = useStore((state) => state.logout);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const initTheme = useStore((state) => state.initTheme);
@@ -59,6 +59,10 @@ export default function Navbar() {
     window.dispatchEvent(new Event('auth-change'));
   };
 
+  const userDisplayName = user?.first_name 
+    ? `${user.first_name} ${user.last_name || ''}`.trim() 
+    : user?.name || 'User';
+
   return (
     <>
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 py-4">
@@ -97,7 +101,7 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Account Icon Dropdown Menu */}
+            {/* Account Menu */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -118,7 +122,7 @@ export default function Navbar() {
                       <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
                         <p className="text-xs font-semibold text-zinc-400 uppercase">Signed in as</p>
                         <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                          {user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.name || 'User'}
+                          {userDisplayName}
                         </p>
                         <p className="text-xs text-zinc-500 truncate">{user.email}</p>
                       </div>
@@ -156,7 +160,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Login & Registration Modal */}
       <AuthModal
         isOpen={isAuthOpen}
         initialMode={authMode}
