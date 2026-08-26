@@ -14,6 +14,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -33,7 +37,7 @@ export default function LoginPage() {
       router.push('/account');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+      setError(err.message || 'Failed to sign in.');
     } finally {
       setLoading(false);
     }
@@ -53,18 +57,20 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
+            name="email"
             placeholder="Email Address"
             required
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
             required
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
           <button
@@ -76,7 +82,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-center text-sm text-zinc-400 mt-6">
-          Don&apos;t have an account?{' '}
+          Don't have an account?{' '}
           <Link href="/signup" className="text-red-500 font-bold hover:underline">
             Sign Up
           </Link>

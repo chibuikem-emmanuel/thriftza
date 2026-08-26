@@ -11,17 +11,16 @@ export default function SignupPage() {
   const setUser = useStore((state) => state.setUser);
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    full_name: '',
     email: '',
-    phone_number: '',
+    whatsapp_number: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,13 +28,17 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
+    const nameParts = formData.full_name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
     try {
       const response = await registerUser({
-        email: formData.email.trim(),
+        email: formData.email,
         password: formData.password,
-        first_name: formData.first_name.trim(),
-        last_name: formData.last_name.trim(),
-        phone_number: formData.phone_number.trim(),
+        first_name: firstName,
+        last_name: lastName,
+        phone_number: formData.whatsapp_number,
       });
 
       if (response?.user) {
@@ -64,27 +67,15 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              type="text"
-              name="first_name"
-              placeholder="First Name"
-              required
-              value={formData.first_name}
-              onChange={handleChange}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-            />
-            <input
-              type="text"
-              name="last_name"
-              placeholder="Last Name"
-              required
-              value={formData.last_name}
-              onChange={handleChange}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-            />
-          </div>
-
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Full Name"
+            required
+            value={formData.full_name}
+            onChange={handleChange}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+          />
           <input
             type="email"
             name="email"
@@ -94,28 +85,25 @@ export default function SignupPage() {
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
-
           <input
             type="tel"
-            name="phone_number"
-            placeholder="WhatsApp Phone Number (e.g. 08012345678)"
+            name="whatsapp_number"
+            placeholder="WhatsApp Phone Number (e.g., 08012345678)"
             required
-            value={formData.phone_number}
+            value={formData.whatsapp_number}
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
-
           <input
             type="password"
             name="password"
-            placeholder="Password (min 8 characters)"
+            placeholder="Password"
             required
             minLength={8}
             value={formData.password}
             onChange={handleChange}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
-
           <button
             type="submit"
             disabled={loading}
@@ -124,7 +112,6 @@ export default function SignupPage() {
             {loading ? 'CREATING...' : 'CREATE ACCOUNT'}
           </button>
         </form>
-
         <p className="text-center text-sm text-zinc-400 mt-6">
           Already have an account?{' '}
           <Link href="/login" className="text-red-500 font-bold hover:underline">
