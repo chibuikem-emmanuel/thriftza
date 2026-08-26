@@ -25,8 +25,20 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
+    // Split Full Name into First Name & Last Name for Django model
+    const nameParts = formData.full_name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
     try {
-      await registerUser(formData);
+      await registerUser({
+        email: formData.email,
+        password: formData.password,
+        first_name: firstName,
+        last_name: lastName,
+        phone_number: formData.whatsapp_number,
+      });
+
       window.dispatchEvent(new Event('auth-change'));
       router.push('/account');
       router.refresh();

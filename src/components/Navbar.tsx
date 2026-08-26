@@ -48,6 +48,17 @@ export default function Navbar() {
     setIsDropdownOpen(false);
   };
 
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+    }
+    logout();
+    setIsDropdownOpen(false);
+    window.dispatchEvent(new Event('auth-change'));
+  };
+
   return (
     <>
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 py-4">
@@ -106,15 +117,14 @@ export default function Navbar() {
                     <>
                       <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
                         <p className="text-xs font-semibold text-zinc-400 uppercase">Signed in as</p>
-                        <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">{user.name}</p>
+                        <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                          {user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.name || 'User'}
+                        </p>
                         <p className="text-xs text-zinc-500 truncate">{user.email}</p>
                       </div>
 
                       <button
-                        onClick={() => {
-                          logout();
-                          setIsDropdownOpen(false);
-                        }}
+                        onClick={handleLogout}
                         className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center gap-2 transition"
                       >
                         <LogOut className="w-4 h-4" />

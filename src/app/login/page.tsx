@@ -7,7 +7,7 @@ import { loginUser } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,11 +41,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="text"
-            placeholder="Username or Email"
+            type="email"
+            placeholder="Email Address"
             required
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
           />
           <input

@@ -27,9 +27,9 @@ export default function CheckoutPage() {
         const user = JSON.parse(savedUser);
         setFormData((prev) => ({
           ...prev,
-          full_name: user.full_name || '',
+          full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.name || '',
           email: user.email || '',
-          phone: user.whatsapp_number || '',
+          phone: user.phone_number || user.whatsapp_number || '',
         }));
       } catch (e) {
         console.error('Error parsing user data', e);
@@ -57,34 +57,33 @@ export default function CheckoutPage() {
     setError('');
 
     try {
-      const orderData = {
-        customer: formData,
-        items: cart.map((item) => ({
-          id: item.id,
-          title: item.title || item.name || 'Item',
-          price: item.price,
-          quantity: item.quantity ?? 1,
-          size: item.selectedSize || item.size || '',
-        })),
-        total_amount: totalAmount,
-      };
-
-      const res = await fetchApi('/api/checkout/', {
+      // Direct call to Django endpoint '/api/orders/checkout/'
+      const data = await fetchApi('/api/orders/checkout/', {
         method: 'POST',
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({
+          amount: totalAmount,
+          customer: formData,
+          items: cart.map((item) => ({
+            id: item.id,
+            title: item.title || item.name || 'Item',
+            price: item.price,
+            quantity: item.quantity ?? 1,
+            size: item.selectedSize || item.size || '',
+          })),
+        }),
       });
 
-      const data = await res.json();
+      // Retrieve Bachs payment link from response payload
+      const checkoutUrl =
+        data.payment?.checkout_url ||
+        data.payment?.data?.checkout_url ||
+        data.checkout_url;
 
-      if (!res.ok) {
-        throw new Error(data.detail || data.message || 'Payment initiation failed.');
-      }
-
-      if (data.checkout_url) {
+      if (checkoutUrl) {
         if (clearCart) clearCart();
-        window.location.href = data.checkout_url;
+        window.location.href = checkoutUrl;
       } else {
-        throw new Error('Checkout URL was not returned by backend.');
+        throw new Error('Checkout URL was not returned by payment gateway.');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to complete checkout.');

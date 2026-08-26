@@ -1,4 +1,6 @@
-const API_BASE = process.env.API_URL || 'https://thriftza-back-8vlw.onrender.com';
+const API_BASE = (
+  process.env.NEXT_PUBLIC_API_URL || 'https://thriftza-back-8vlw.onrender.com'
+).replace(/\/$/, '');
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
@@ -9,40 +11,55 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     ...options.headers,
   };
 
-  const response = await fetch(`${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`, {
-    ...options,
-    headers,
-  });
-
+  const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const response = await fetch(`${API_BASE}${formattedEndpoint}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.detail || data.message || `API error: ${response.status}`);
+    const errorMsg = data.detail || data.message || Object.values(data).flat().join(' ') || 'An error occurred';
+    throw new Error(errorMsg);
   }
-
   return data;
 }
 
-export async function loginUser(credentials: Record<string, any>) {
-  const data = await fetchApi('/api/auth/login/', {
-    method: 'POST',
-    body: JSON.stringify(credentials),
-  });
-
-  if (data.access) localStorage.setItem('access_token', data.access);
-  if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
-
-  return data;
-}
-
-export async function registerUser(payload: Record<string, any>) {
+export async function registerUser(payload: {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+}) {
   const data = await fetchApi('/api/auth/register/', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
 
-  if (data.access) localStorage.setItem('access_token', data.access);
-  if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
-
+  if (typeof window !== 'undefined' && data.access) {
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+  }
   return data;
+}
+
+export async function loginUser(credentials: { email: string; password: string }) {
+  // Django JWT TokenObtainPairView expects 'email' or 'username' depending on USERNAME_FIELD
+  const data = await fetchApi('/api/auth/login/', {
+    method: 'POST',
+    body: JSON.stringify({
+      username: credentials.email, // Passing email as username for Django
+      password: credentials.password,
+    }),
+  });
+
+  if (typeof window !== 'undefined' && data.access) {
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+  }
+  return data;
+}
+
+export async function getCurrentUser() {
+  return await fetchApi('/api/auth/me/', {
+    method: 'GET',
+  });
 }
