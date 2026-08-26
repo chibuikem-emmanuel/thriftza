@@ -4,9 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api';
+import { useStore } from '@/store/useStore';
 
 export default function LoginPage() {
   const router = useRouter();
+  const setUser = useStore((state) => state.setUser);
+  
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +20,12 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await loginUser(formData);
+      const response = await loginUser(formData);
+
+      if (response?.user) {
+        setUser(response.user);
+      }
+
       window.dispatchEvent(new Event('auth-change'));
       router.push('/account');
       router.refresh();

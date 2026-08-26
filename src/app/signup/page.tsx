@@ -4,9 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api';
+import { useStore } from '@/store/useStore';
 
 export default function SignupPage() {
   const router = useRouter();
+  const setUser = useStore((state) => state.setUser);
+  
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -25,19 +28,22 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
-    // Split Full Name into First Name & Last Name for Django model
     const nameParts = formData.full_name.trim().split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || '';
 
     try {
-      await registerUser({
+      const response = await registerUser({
         email: formData.email,
         password: formData.password,
         first_name: firstName,
         last_name: lastName,
         phone_number: formData.whatsapp_number,
       });
+
+      if (response?.user) {
+        setUser(response.user);
+      }
 
       window.dispatchEvent(new Event('auth-change'));
       router.push('/account');
