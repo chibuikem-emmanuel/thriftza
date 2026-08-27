@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 
+export const dynamic = "force-dynamic";
+
 export default function CheckoutPage() {
-  const router = useRouter();
   const { cart, clearCart } = useCart();
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -19,7 +20,10 @@ export default function CheckoutPage() {
     state: "Lagos State",
   });
 
-  // Safe calculation guaranteeing quantity is never undefined (Fixes TS18048 line 25)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const totalAmount = cart.reduce(
     (sum, item) => sum + (Number(item.price) || 0) * (item.quantity ?? 1),
     0
@@ -75,6 +79,14 @@ export default function CheckoutPage() {
       setLoading(false);
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 text-center">
+        <p className="text-gray-500">Loading checkout...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -153,7 +165,6 @@ export default function CheckoutPage() {
               >
                 <div>
                   <p className="font-semibold">{item.name}</p>
-                  {/* Safe rendering guaranteeing quantity is never undefined (Fixes TS18048 line 210) */}
                   <p className="text-sm text-gray-500">
                     Qty: {item.quantity ?? 1} x ₦{item.price.toLocaleString()}
                   </p>

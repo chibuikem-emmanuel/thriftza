@@ -6,7 +6,7 @@ export interface CartItem {
   id: string | number;
   name: string;
   price: number;
-  quantity: number; // Required property prevents optional undefined errors
+  quantity: number;
   image?: string;
 }
 
@@ -69,7 +69,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
+    // Return a default safe state for static prerendering builds instead of throwing
+    return {
+      cart: [],
+      addToCart: () => {},
+      removeFromCart: () => {},
+      clearCart: () => {},
+    };
   }
   return context;
 }
