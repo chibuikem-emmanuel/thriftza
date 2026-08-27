@@ -24,10 +24,12 @@ export default function CheckoutPage() {
     setMounted(true);
   }, []);
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + (Number(item.price) || 0) * (item.quantity ?? 1),
-    0
-  );
+  // Defensive calculation handling both item.name and item.title, alongside numeric price casting
+  const totalAmount = cart.reduce((sum, item) => {
+    const priceNum = typeof item.price === "string" ? parseFloat(item.price) : item.price;
+    const qtyNum = item.quantity ?? 1;
+    return sum + (isNaN(priceNum) ? 0 : priceNum) * qtyNum;
+  }, 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -49,7 +51,7 @@ export default function CheckoutPage() {
       items: cart.map((item) => ({
         product_id: item.id,
         quantity: item.quantity ?? 1,
-        price: item.price,
+        price: typeof item.price === "string" ? parseFloat(item.price) : item.price,
       })),
     };
 
@@ -82,18 +84,18 @@ export default function CheckoutPage() {
 
   if (!mounted) {
     return (
-      <div className="max-w-4xl mx-auto p-6 text-center">
-        <p className="text-gray-500">Loading checkout...</p>
+      <div className="max-w-4xl mx-auto p-6 text-center text-zinc-400">
+        <p>Loading checkout...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="max-w-4xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8 text-zinc-100">
       <div>
         <h2 className="text-2xl font-bold mb-4">Checkout Details</h2>
         {errorMessage && (
-          <div className="p-3 mb-4 text-sm text-red-600 bg-red-100 rounded">
+          <div className="p-3 mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800 rounded">
             {errorMessage}
           </div>
         )}
@@ -106,7 +108,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_name}
               onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
             />
           </div>
           <div>
@@ -117,7 +119,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_email}
               onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
             />
           </div>
           <div>
@@ -128,7 +130,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_phone}
               onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
             />
           </div>
           <div>
@@ -139,42 +141,48 @@ export default function CheckoutPage() {
               required
               value={formData.shipping_address}
               onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
             />
           </div>
           <button
             type="submit"
             disabled={loading || cart.length === 0}
-            className="w-full bg-black text-white py-3 rounded font-semibold hover:bg-gray-800 disabled:opacity-50"
+            className="w-full bg-white text-black py-3 rounded font-semibold hover:bg-zinc-200 disabled:opacity-50 transition"
           >
             {loading ? "Processing..." : `Pay ₦${totalAmount.toLocaleString()}`}
           </button>
         </form>
       </div>
 
-      <div className="border p-6 rounded bg-gray-50 h-fit">
+      <div className="border border-zinc-800 p-6 rounded bg-zinc-900/50 h-fit">
         <h3 className="text-xl font-bold mb-4">Order Summary</h3>
         {cart.length === 0 ? (
-          <p className="text-gray-500">Your cart is empty.</p>
+          <p className="text-zinc-500">Your cart is empty.</p>
         ) : (
           <div className="space-y-4">
-            {cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center border-b pb-2"
-              >
-                <div>
-                  <p className="font-semibold">{item.name}</p>
-                  <p className="text-sm text-gray-500">
-                    Qty: {item.quantity ?? 1} x ₦{item.price.toLocaleString()}
+            {cart.map((item) => {
+              const itemPrice = typeof item.price === "string" ? parseFloat(item.price) : item.price;
+              const itemQty = item.quantity ?? 1;
+              const itemTitle = item.name || item.title || "Product";
+              
+              return (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center border-b border-zinc-800 pb-2"
+                >
+                  <div>
+                    <p className="font-semibold">{itemTitle}</p>
+                    <p className="text-sm text-zinc-400">
+                      Qty: {itemQty} x ₦{itemPrice.toLocaleString()}
+                    </p>
+                  </div>
+                  <p className="font-bold">
+                    ₦{(itemQty * itemPrice).toLocaleString()}
                   </p>
                 </div>
-                <p className="font-bold">
-                  ₦{((item.quantity ?? 1) * item.price).toLocaleString()}
-                </p>
-              </div>
-            ))}
-            <div className="flex justify-between font-bold text-lg pt-2">
+              );
+            })}
+            <div className="flex justify-between font-bold text-lg pt-2 border-t border-zinc-700">
               <span>Total</span>
               <span>₦{totalAmount.toLocaleString()}</span>
             </div>
