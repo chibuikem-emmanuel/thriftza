@@ -11,7 +11,8 @@ export default function ProductDetailPage() {
   const productId = params?.id as string;
 
   const addToCart = useStore((state) => state.addToCart);
-  const addToFavorites = useStore((state) => state.addToFavorites);
+  // Safely grab store action regardless of exact naming
+  const store = useStore() as any;
 
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -20,17 +21,15 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!productId) return;
 
-    // Fetch product details from your backend API
     const fetchProduct = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
         const res = await fetch(`${apiUrl}/api/products/${productId}/`);
-        
+
         if (res.ok) {
           const data = await res.json();
           setProduct(data);
         } else {
-          // Fallback placeholder if backend ID fetching isn't ready
           setProduct({
             id: productId,
             title: `Product ${productId.toUpperCase()}`,
@@ -51,9 +50,23 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product);
+    if (typeof addToCart === "function") {
+      addToCart(product);
+    }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleFavoriteToggle = () => {
+    if (!product) return;
+    // Execute whichever favorite method exists on your Zustand store
+    if (typeof store.addToFavorites === "function") {
+      store.addToFavorites(product);
+    } else if (typeof store.addFavorite === "function") {
+      store.addFavorite(product);
+    } else if (typeof store.toggleFavorite === "function") {
+      store.toggleFavorite(product);
+    }
   };
 
   if (loading) {
@@ -88,7 +101,6 @@ export default function ProductDetailPage() {
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Product Image */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden aspect-square flex items-center justify-center">
           {product.image ? (
             <img
@@ -101,7 +113,6 @@ export default function ProductDetailPage() {
           )}
         </div>
 
-        {/* Product Info */}
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">
@@ -125,15 +136,13 @@ export default function ProductDetailPage() {
               {added ? "Added to Cart!" : "Add to Cart"}
             </button>
 
-            {addToFavorites && (
-              <button
-                onClick={() => addToFavorites(product)}
-                className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl hover:text-red-600 transition"
-                aria-label="Add to Favorites"
-              >
-                <Heart className="w-5 h-5" />
-              </button>
-            )}
+            <button
+              onClick={handleFavoriteToggle}
+              className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl hover:text-red-600 transition"
+              aria-label="Add to Favorites"
+            >
+              <Heart className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
