@@ -34,22 +34,25 @@ export default function SignupPage() {
 
     try {
       const response = await registerUser({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         first_name: firstName,
         last_name: lastName,
-        phone_number: formData.whatsapp_number,
+        phone_number: formData.whatsapp_number.trim(),
       });
 
-      if (response?.user) {
+      // Strict validation: Only proceed if backend returns created user payload
+      if (response && response.user) {
         setUser(response.user);
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/account');
+        router.refresh();
+      } else {
+        throw new Error('Registration failed on server.');
       }
-
-      window.dispatchEvent(new Event('auth-change'));
-      router.push('/account');
-      router.refresh();
     } catch (err: any) {
-      setError(err.message || 'Registration failed.');
+      console.error('Registration Error:', err);
+      setError(err.message || 'Registration failed. Please check your details.');
     } finally {
       setLoading(false);
     }

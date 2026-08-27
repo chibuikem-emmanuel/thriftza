@@ -29,15 +29,18 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      if (response?.user) {
+      // Strict validation: Only proceed if backend returns user payload
+      if (response && response.user) {
         setUser(response.user);
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/account');
+        router.refresh();
+      } else {
+        throw new Error('Invalid credentials or missing response from server.');
       }
-
-      window.dispatchEvent(new Event('auth-change'));
-      router.push('/account');
-      router.refresh();
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in.');
+      console.error('Login Error:', err);
+      setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
       setLoading(false);
     }
