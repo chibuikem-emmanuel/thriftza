@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useCart } from "@/context/CartContext";
+import { useStore } from "@/store/useStore";
 
 export const dynamic = "force-dynamic";
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useCart();
+  const cart = useStore((state) => state.cart) || [];
+  const clearCart = useStore((state) => state.clearCart);
+
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,9 +26,9 @@ export default function CheckoutPage() {
     setMounted(true);
   }, []);
 
-  // Defensive calculation handling both item.name and item.title, alongside numeric price casting
   const totalAmount = cart.reduce((sum, item) => {
-    const priceNum = typeof item.price === "string" ? parseFloat(item.price) : item.price;
+    const rawPrice = item.price ?? 0;
+    const priceNum = typeof rawPrice === "string" ? parseFloat(rawPrice) : Number(rawPrice);
     const qtyNum = item.quantity ?? 1;
     return sum + (isNaN(priceNum) ? 0 : priceNum) * qtyNum;
   }, 0);
@@ -49,7 +51,7 @@ export default function CheckoutPage() {
       ...formData,
       total_amount: totalAmount,
       items: cart.map((item) => ({
-        product_id: item.id,
+        product_id: item.id || (item as any)._id,
         quantity: item.quantity ?? 1,
         price: typeof item.price === "string" ? parseFloat(item.price) : item.price,
       })),
@@ -68,7 +70,9 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (res.ok && data.checkout_url) {
-        clearCart();
+        if (typeof clearCart === "function") {
+          clearCart();
+        }
         window.location.href = data.checkout_url;
       } else {
         setErrorMessage(data.error || "Failed to initialize payment gateway.");
@@ -108,7 +112,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_name}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-red-600"
             />
           </div>
           <div>
@@ -119,7 +123,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_email}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-red-600"
             />
           </div>
           <div>
@@ -130,7 +134,7 @@ export default function CheckoutPage() {
               required
               value={formData.customer_phone}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-red-600"
             />
           </div>
           <div>
@@ -141,13 +145,13 @@ export default function CheckoutPage() {
               required
               value={formData.shipping_address}
               onChange={handleChange}
-              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-white"
+              className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded mt-1 text-white focus:outline-none focus:border-red-600"
             />
           </div>
           <button
             type="submit"
             disabled={loading || cart.length === 0}
-            className="w-full bg-white text-black py-3 rounded font-semibold hover:bg-zinc-200 disabled:opacity-50 transition"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded font-semibold disabled:opacity-50 transition"
           >
             {loading ? "Processing..." : `Pay ₦${totalAmount.toLocaleString()}`}
           </button>
@@ -160,14 +164,16 @@ export default function CheckoutPage() {
           <p className="text-zinc-500">Your cart is empty.</p>
         ) : (
           <div className="space-y-4">
-            {cart.map((item) => {
-              const itemPrice = typeof item.price === "string" ? parseFloat(item.price) : item.price;
+            {cart.map((item, idx) => {
+              const rawPrice = item.price ?? 0;
+              const itemPrice = typeof rawPrice === "string" ? parseFloat(rawPrice) : Number(rawPrice);
               const itemQty = item.quantity ?? 1;
-              const itemTitle = item.name || item.title || "Product";
-              
+              const itemTitle = (item as any).name || item.title || "Product";
+              const key = item.id || (item as any)._id || idx;
+
               return (
                 <div
-                  key={item.id}
+                  key={key}
                   className="flex justify-between items-center border-b border-zinc-800 pb-2"
                 >
                   <div>

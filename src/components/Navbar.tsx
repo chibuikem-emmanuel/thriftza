@@ -7,8 +7,8 @@ import { ShoppingBag, Heart, Sun, Moon, User, LogOut, UserCheck } from 'lucide-r
 import AuthModal from '@/components/AuthModal';
 
 export default function Navbar() {
-  const cart = useStore((state) => state.cart);
-  const favorites = useStore((state) => state.favorites);
+  const cart = useStore((state) => state.cart) || [];
+  const favorites = useStore((state) => state.favorites) || [];
   const theme = useStore((state) => state.theme);
   const user = useStore((state) => state.user) as UserType | null;
   const setUser = useStore((state) => state.setUser);
