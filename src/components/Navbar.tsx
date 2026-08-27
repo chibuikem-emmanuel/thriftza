@@ -11,6 +11,7 @@ export default function Navbar() {
   const favorites = useStore((state) => state.favorites);
   const theme = useStore((state) => state.theme);
   const user = useStore((state) => state.user) as UserType | null;
+  const setUser = useStore((state) => state.setUser);
   const logout = useStore((state) => state.logout);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const initTheme = useStore((state) => state.initTheme);
@@ -22,7 +23,22 @@ export default function Navbar() {
 
   useEffect(() => {
     initTheme();
-  }, [initTheme]);
+
+    const syncUserFromStorage = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch {}
+      } else {
+        setUser(null);
+      }
+    };
+
+    syncUserFromStorage();
+    window.addEventListener('auth-change', syncUserFromStorage);
+    return () => window.removeEventListener('auth-change', syncUserFromStorage);
+  }, [initTheme, setUser]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,9 +75,9 @@ export default function Navbar() {
     window.dispatchEvent(new Event('auth-change'));
   };
 
-  const userDisplayName = user?.first_name 
-    ? `${user.first_name} ${user.last_name || ''}`.trim() 
-    : user?.name || 'User';
+  const userDisplayName = user?.first_name
+    ? `${user.first_name} ${user.last_name || ''}`.trim()
+    : user?.email || 'User';
 
   return (
     <>
@@ -72,7 +88,6 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-5">
-            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="p-2 text-zinc-700 dark:text-zinc-300 hover:text-red-600 transition"
@@ -81,7 +96,6 @@ export default function Navbar() {
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
 
-            {/* Saved Favorites */}
             <Link href="/favorites" className="relative p-2 text-zinc-700 dark:text-zinc-300 hover:text-red-600 transition">
               <Heart className="w-5 h-5" />
               {favorites.length > 0 && (
@@ -91,7 +105,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Cart Counter */}
             <Link href="/cart" className="relative p-2 text-zinc-700 dark:text-zinc-300 hover:text-red-600 transition">
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -101,7 +114,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Account Menu */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

@@ -12,23 +12,21 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   };
 
   const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-
-  const response = await fetch(`${API_BASE}${formattedEndpoint}`, {
-    ...options,
-    headers,
-  });
-
+  const response = await fetch(`${API_BASE}${formattedEndpoint}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     const errorMsg =
       data.detail ||
       data.message ||
-      (typeof data === 'object' ? Object.values(data).flat().join(' ') : null) ||
+      (typeof data === 'object'
+        ? Object.entries(data)
+            .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(' ') : v}`)
+            .join(' | ')
+        : null) ||
       'An error occurred';
     throw new Error(errorMsg);
   }
-
   return data;
 }
 
@@ -51,7 +49,6 @@ export async function registerUser(payload: {
       localStorage.setItem('user', JSON.stringify(data.user));
     }
   }
-
   return data;
 }
 
@@ -59,7 +56,7 @@ export async function loginUser(credentials: { email: string; password: string }
   const data = await fetchApi('/api/auth/login/', {
     method: 'POST',
     body: JSON.stringify({
-      username: credentials.email,
+      email: credentials.email,
       password: credentials.password,
     }),
   });
@@ -71,14 +68,11 @@ export async function loginUser(credentials: { email: string; password: string }
       localStorage.setItem('user', JSON.stringify(data.user));
     }
   }
-
   return data;
 }
 
 export async function getCurrentUser() {
-  return await fetchApi('/api/auth/me/', {
-    method: 'GET',
-  });
+  return await fetchApi('/api/auth/me/', { method: 'GET' });
 }
 
 export function logoutUser() {
