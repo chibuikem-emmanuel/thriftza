@@ -59,7 +59,7 @@ export default function CheckoutPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}/api/orders/checkout/`,
+        `${process.env.NEXT_PUBLIC_API_URL || "https://thriftza-back-8vlw.onrender.com"}/api/orders/checkout/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
