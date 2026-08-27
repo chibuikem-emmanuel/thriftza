@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface CartItem {
   id: string | number;
+  _id?: string | number;
   name?: string;
   title?: string;
   price: number | string;
@@ -16,51 +17,72 @@ interface CartContextType {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string | number) => void;
   clearCart: () => void;
+  totalCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [initialized, setInitialized] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate cart from localStorage on client mount
+  // Read from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem("thriftza_cart");
       if (savedCart) {
-        setCart(JSON.parse(savedCart));
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) {
+          setCart(parsed);
+        }
       }
     } catch (e) {
-      console.error("Failed to parse local storage cart:", e);
+      console.error("Error reading cart from localStorage:", e);
     } finally {
-      setInitialized(true);
+      setIsHydrated(true);
     }
   }, []);
 
-  // Sync cart changes back to localStorage after initialization
+  // Sync state changes to localStorage
   useEffect(() => {
-    if (initialized) {
+    if (isHydrated) {
       localStorage.setItem("thriftza_cart", JSON.stringify(cart));
     }
-  }, [cart, initialized]);
+  }, [cart, isHydrated]);
 
   const addToCart = (product: CartItem) => {
+    const targetId = String(product.id || product._id);
     setCart((prev) => {
-      const existing = prev.find((item) => String(item.id) === String(product.id));
-      if (existing) {
-        return prev.map((item) =>
-          String(item.id) === String(product.id)
-            ? { ...item, quantity: (item.quantity ?? 1) + 1 }
-            : item
-        );
+      const existingIndex = prev.findIndex(
+        (item) => String(item.id || item._id) === targetId
+      );
+
+      if (existingIndex > -1) {
+        const updated = [...prev];
+        const currentQty = updated[existingIndex].quantity ?? 1;
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: currentQty + 1,
+        };
+        return updated;
       }
-      return [...prev, { ...product, quantity: product.quantity ?? 1 }];
+
+      return [
+        ...prev,
+        {
+          ...product,
+          id: targetId,
+          quantity: product.quantity ?? 1,
+        },
+      ];
     });
   };
 
   const removeFromCart = (id: string | number) => {
-    setCart((prev) => prev.filter((item) => String(item.id) !== String(id)));
+    const targetId = String(id);
+    setCart((prev) =>
+      prev.filter((item) => String(item.id || item._id) !== targetId)
+    );
   };
 
   const clearCart = () => {
@@ -68,8 +90,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("thriftza_cart");
   };
 
+  const totalCount = cart.reduce(
+    (sum, item) => sum + (item.quantity ?? 1),
+    0
+  );
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart, totalCount }}
+    >
       {children}
     </CartContext.Provider>
   );
