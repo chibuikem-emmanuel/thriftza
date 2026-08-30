@@ -50,11 +50,20 @@ export default function CheckoutPage() {
     const payload = {
       ...formData,
       total_amount: totalAmount,
-      items: cart.map((item) => ({
-        product_id: item.id || (item as any)._id,
-        quantity: item.quantity ?? 1,
-        price: typeof item.price === "string" ? parseFloat(item.price) : item.price,
-      })),
+      items: cart.map((item) => {
+        const title = (item as any).name || (item as any).title || (item as any).product_name || "Product Item";
+        const priceVal = typeof item.price === "string" ? parseFloat(item.price) : Number(item.price || 0);
+
+        return {
+          product_id: item.id || (item as any)._id,
+          product_name: title,
+          name: title,
+          quantity: item.quantity ?? 1,
+          unit_price: priceVal,
+          price: priceVal,
+          size: (item as any).size || null,
+        };
+      }),
     };
 
     try {
@@ -168,7 +177,7 @@ export default function CheckoutPage() {
               const rawPrice = item.price ?? 0;
               const itemPrice = typeof rawPrice === "string" ? parseFloat(rawPrice) : Number(rawPrice);
               const itemQty = item.quantity ?? 1;
-              const itemTitle = (item as any).name || item.title || "Product";
+              const itemTitle = (item as any).name || (item as any).title || (item as any).product_name || "Product";
               const key = item.id || (item as any)._id || idx;
 
               return (
