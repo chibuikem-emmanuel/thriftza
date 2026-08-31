@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag, AlertCircle } from "lucide-react";
+import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag, AlertCircle, Trash2 } from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -33,6 +33,7 @@ export default function AdminOrdersPage() {
     "Hello {name}, thank you for choosing Zawear! We have an update regarding your order #{ref}."
   );
   const [showBulkModal, setShowBulkModal] = useState<boolean>(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://thriftza-back-8vlw.onrender.com";
 
@@ -40,7 +41,6 @@ export default function AdminOrdersPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      // Updated to match your unchanged order/urls.py route
       const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/`;
       
       const res = await fetch(endpoint, {
@@ -75,6 +75,54 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const handleDeleteOrder = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this order?")) return;
+
+    setDeletingId(id);
+    try {
+      const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/${id}/`;
+      const res = await fetch(endpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to delete order. Status: ${res.status}`);
+      }
+
+      setOrders((prev) => prev.filter((order) => order.id !== id));
+      setSelectedOrders((prev) => prev.filter((item) => item !== id));
+    } catch (err: any) {
+      console.error("Delete Error:", err);
+      alert(err.message || "Error deleting order.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedOrders.length} order(s)?`)) return;
+
+    try {
+      await Promise.all(
+        selectedOrders.map((id) =>
+          fetch(`${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/${id}/`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          })
+        )
+      );
+
+      setOrders((prev) => prev.filter((order) => !selectedOrders.includes(order.id)));
+      setSelectedOrders([]);
+    } catch (err: any) {
+      console.error("Bulk Delete Error:", err);
+      alert("Some orders could not be deleted.");
+    }
+  };
 
   const formatPhone = (phone: string) => {
     let clean = phone.replace(/\D/g, "");
@@ -136,7 +184,7 @@ export default function AdminOrdersPage() {
           <h1 className="text-3xl font-extrabold tracking-tight">Zawear Admin Dashboard</h1>
           <p className="text-zinc-400 text-sm mt-1">Track orders and dispatch customer WhatsApp messages.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <button
             onClick={fetchOrders}
             className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-4 py-2 rounded-xl text-sm font-semibold transition"
@@ -148,7 +196,14 @@ export default function AdminOrdersPage() {
             onClick={() => setShowBulkModal(true)}
             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
           >
-            <Send className="w-4 h-4" /> Send Bulk WA ({selectedOrders.length})
+            <Send className="w-4 h-4" /> Bulk WA ({selectedOrders.length})
+          </button>
+          <button
+            disabled={selectedOrders.length === 0}
+            onClick={handleBulkDelete}
+            className="flex items-center gap-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-800 disabled:opacity-50 px-4 py-2 rounded-xl text-sm font-semibold transition"
+          >
+            <Trash2 className="w-4 h-4" /> Delete Selected ({selectedOrders.length})
           </button>
         </div>
       </div>
@@ -267,6 +322,13 @@ export default function AdminOrdersPage() {
                           className="flex items-center gap-1 bg-teal-600/20 text-teal-400 hover:bg-teal-600/30 border border-teal-800/50 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition disabled:opacity-40"
                         >
                           <Send className="w-3.5 h-3.5" /> Status WA
+                        </button>
+                        <button
+                          disabled={deletingId === order.id}
+                          onClick={() => handleDeleteOrder(order.id)}
+                          className="flex items-center gap-1 bg-red-600/20 text-red-400 hover:bg-red-600/30 border border-red-800/50 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition disabled:opacity-40"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> {deletingId === order.id ? "Deleting..." : "Delete"}
                         </button>
                       </div>
                     </td>
