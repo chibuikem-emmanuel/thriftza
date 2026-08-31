@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-zinc-600 font-bold text-2xl">THRIFTZA</span>
+            <span className="text-zinc-600 font-bold text-2xl">ZAWEAR</span>
           )}
         </div>
 
