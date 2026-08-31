@@ -7,7 +7,7 @@ import { CartProvider } from '@/context/CartContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'THRIFTZA | Premium Vintage & Thrift Streetwear',
+  title: 'ZAWEAR | Premium POLOS',
   description: 'Curated fashion and streetwear drops.',
 };
 
