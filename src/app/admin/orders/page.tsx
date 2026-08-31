@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MessageSquare, RefreshCw, Send, CheckCircle, Clock } from "lucide-react";
+import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag } from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -25,6 +25,7 @@ interface Order {
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
   const [bulkMessage, setBulkMessage] = useState<string>(
@@ -40,7 +41,12 @@ export default function AdminOrdersPage() {
       const res = await fetch(`${API_URL}/api/orders/admin-list/`);
       if (res.ok) {
         const data = await res.json();
-        setOrders(data);
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else {
+          setOrders(data.orders || []);
+          setTotalUsers(data.total_users || 0);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch orders:", err);
@@ -53,7 +59,6 @@ export default function AdminOrdersPage() {
     fetchOrders();
   }, []);
 
-  // Helper to format phone to international 234 format
   const formatPhone = (phone: string) => {
     let clean = phone.replace(/\D/g, "");
     if (clean.startsWith("0") && clean.length === 11) {
@@ -100,7 +105,6 @@ export default function AdminOrdersPage() {
         .replace(/{ref}/g, order.reference);
       
       const url = createWhatsAppUrl(order.customer_phone, text);
-      // Stagger tab popups to avoid browser popup blockers
       setTimeout(() => {
         window.open(url, "_blank");
       }, index * 800);
@@ -109,8 +113,9 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 text-zinc-100">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div className="max-w-7xl mx-auto p-6 text-zinc-100 space-y-6">
+      {/* Top Bar Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Zawear Admin Dashboard</h1>
           <p className="text-zinc-400 text-sm mt-1">Track orders and dispatch customer WhatsApp messages.</p>
@@ -132,6 +137,30 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
+      {/* Metrics Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Total Registered Users</p>
+            <h2 className="text-3xl font-bold text-white mt-1">{loading ? "..." : totalUsers}</h2>
+          </div>
+          <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+            <Users className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Total Orders</p>
+            <h2 className="text-3xl font-bold text-white mt-1">{loading ? "..." : orders.length}</h2>
+          </div>
+          <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl">
+            <ShoppingBag className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
+      {/* Orders Table */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
