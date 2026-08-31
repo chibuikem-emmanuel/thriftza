@@ -40,7 +40,8 @@ export default function AdminOrdersPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin-list/`;
+      // Updated to match your unchanged order/urls.py route
+      const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/`;
       
       const res = await fetch(endpoint, {
         method: "GET",
