@@ -27,7 +27,7 @@ export default function HeroSection() {
         className="absolute bottom-12 left-1/3 hidden xl:flex items-center gap-2 bg-zinc-900/80 border border-amber-500/30 text-amber-400 p-3 rounded-2xl shadow-xl backdrop-blur-md pointer-events-none z-20"
       >
         <Percent className="w-6 h-6" />
-        <span className="text-xs font-black text-white uppercase">Flat ₦4,500</span>
+        <span className="text-xs font-black text-white uppercase">Flat ₦5,500</span>
       </motion.div>
 
       <motion.div
@@ -36,7 +36,7 @@ export default function HeroSection() {
         className="absolute top-1/3 right-8 hidden xl:flex items-center gap-2 bg-zinc-900/80 border border-red-500/30 text-red-400 p-3 rounded-2xl shadow-xl backdrop-blur-md pointer-events-none z-20"
       >
         <Shirt className="w-6 h-6" />
-        <span className="text-xs font-black text-white uppercase">Polos & Trousers</span>
+        <span className="text-xs font-black text-white uppercase">Polos</span>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
@@ -57,9 +57,9 @@ export default function HeroSection() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-tight sm:leading-none"
           >
-            STYLIST THRIFTS AT{' '}
+            STYLIST POLO AT{' '}
             <span className="text-red-500 underline decoration-red-600 underline-offset-4 sm:underline-offset-8">
-              ₦4,500
+              ₦5,500
             </span>{' '}
             EACH
           </motion.h1>
@@ -93,7 +93,7 @@ export default function HeroSection() {
                 <span className="text-white font-bold underline decoration-amber-400">
                   100% FREE Waybill
                 </span>{' '}
-                nationwide!
+                to your corner!
               </p>
             </div>
           </motion.div>
@@ -108,13 +108,13 @@ export default function HeroSection() {
               href="#polos"
               className="bg-red-600 hover:bg-red-700 text-white font-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base uppercase tracking-wider transition-all transform hover:-translate-y-0.5 shadow-lg shadow-red-600/30 flex items-center justify-center gap-2"
             >
-              Shop Polos (₦4.5k) <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5" />
+              Shop Polos (₦5.5k) <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5" />
             </Link>
             <Link
               href="#trousers"
               className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base uppercase tracking-wider transition border border-zinc-700 text-center"
             >
-              Shop Trousers
+              Shop Polos
             </Link>
           </motion.div>
         </div>
@@ -126,7 +126,7 @@ export default function HeroSection() {
             className="bg-zinc-900 border border-zinc-800 p-2.5 sm:p-3 rounded-2xl overflow-hidden shadow-2xl relative group"
           >
             <span className="absolute top-4 left-4 z-10 bg-red-600 text-white font-black text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded shadow-md">
-              ₦4,500
+              ₦5,500
             </span>
             <img
               src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800"
@@ -144,7 +144,7 @@ export default function HeroSection() {
             className="bg-zinc-900 border border-zinc-800 p-2.5 sm:p-3 rounded-2xl overflow-hidden shadow-2xl relative group mt-6 lg:mt-12"
           >
             <span className="absolute top-4 left-4 z-10 bg-red-600 text-white font-black text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded shadow-md">
-              ₦4,500
+              ₦5,500
             </span>
             <img
               src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800"
@@ -152,7 +152,7 @@ export default function HeroSection() {
               className="w-full aspect-[4/5] object-cover rounded-xl group-hover:scale-105 transition duration-500"
             />
             <div className="pt-2 sm:pt-3 pb-1 px-1">
-              <p className="font-bold text-xs sm:text-sm text-zinc-100 truncate">Plain Trousers</p>
+              <p className="font-bold text-xs sm:text-sm text-zinc-100 truncate">Polos</p>
               <p className="text-[10px] sm:text-xs text-zinc-400">Casual & Smart</p>
             </div>
           </motion.div>

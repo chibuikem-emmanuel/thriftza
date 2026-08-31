@@ -46,12 +46,12 @@ export default function BulkPromoModal() {
             </div>
 
             <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
-              FLASH THRIFT DEAL!
+              FLASH DEAL!
             </h3>
 
             <div className="my-4 p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
               <p className="text-3xl font-black text-red-500">
-                ₦4,500 <span className="text-sm font-normal text-zinc-400">/ per item</span>
+                ₦5,500 <span className="text-sm font-normal text-zinc-400">/ per item</span>
               </p>
               <p className="text-xs text-zinc-400 font-mono">*Prices subject to change in future drops</p>
             </div>
@@ -63,7 +63,7 @@ export default function BulkPromoModal() {
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-red-500 shrink-0" />
-                <span>Smart Plain & Chino Trousers</span>
+                <span>Smart Polos</span>
               </li>
               <li className="flex items-center gap-2 bg-amber-500/10 p-2 rounded-lg border border-amber-500/20 text-amber-400 font-bold">
                 <Truck className="w-5 h-5 shrink-0" />
