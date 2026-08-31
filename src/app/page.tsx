@@ -13,9 +13,9 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p1',
     name: 'Vintage Oversized Cotton Polo',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
-    condition: 'Grade A Thrift',
+    condition: 'Grade A Polo',
     size: 'L',
     images: ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
@@ -23,7 +23,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p2',
     name: 'Heavyweight Plain Navy Polo',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
     condition: 'Like New',
     size: 'M',
@@ -33,9 +33,9 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p3',
     name: 'Retro Striped Round Neck Tee',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
-    condition: 'Grade A Thrift',
+    condition: 'Grade A Polo',
     size: 'XL',
     images: ['https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
@@ -43,9 +43,9 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p4',
     name: 'Classic White Athletic Polo',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
-    condition: 'Grade A Thrift',
+    condition: 'Grade A Polo',
     size: 'M',
     images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
@@ -53,7 +53,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p5',
     name: 'Streetwear Black Graphic Polo',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
     condition: 'Like New',
     size: 'L',
@@ -63,9 +63,9 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p6',
     name: 'Essential Olive Green Cotton Tee',
-    price: 4500,
+    price: 5500,
     category: 'Round Neck Polo',
-    condition: 'Grade A Thrift',
+    condition: 'Grade A Polo',
     size: 'S',
     images: ['https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
@@ -76,9 +76,9 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't1',
     name: 'Minimalist Straight-Fit Plain Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
-    condition: 'Grade A Thrift',
+    price: 5500,
+    category: 'Polo',
+    condition: 'Grade A Polo',
     size: '32',
     images: ['https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
@@ -86,8 +86,8 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't2',
     name: 'Tailored Smart Casual Chino Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
+    price: 5500,
+    category: 'Polo',
     condition: 'Like New',
     size: '34',
     images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=800'],
@@ -96,9 +96,9 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't3',
     name: 'Relaxed Fit Plain Black Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
-    condition: 'Grade A Thrift',
+    price: 5500,
+    category: 'Polo',
+    condition: 'Grade A Polo',
     size: '30',
     images: ['https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
@@ -106,9 +106,9 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't4',
     name: 'Pleated Cream Smart Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
-    condition: 'Grade A Thrift',
+    price: 5500,
+    category: 'Polo',
+    condition: 'Grade A Polo',
     size: '33',
     images: ['https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
@@ -116,8 +116,8 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't5',
     name: 'Slim Fit Grey Formal Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
+    price: 5500,
+    category: 'Polo',
     condition: 'Like New',
     size: '31',
     images: ['https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&q=80&w=800'],
@@ -126,9 +126,9 @@ const PLAIN_TROUSERS: Product[] = [
   {
     id: 't6',
     name: 'Vintage Khaki Everyday Trousers',
-    price: 4500,
-    category: 'Plain Trousers',
-    condition: 'Grade A Thrift',
+    price: 5500,
+    category: 'Polo',
+    condition: 'Grade A Polo',
     size: '36',
     images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=800'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
@@ -153,7 +153,7 @@ export default function Home() {
             <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
               <div>
                 <span className="text-red-600 font-extrabold uppercase text-[10px] sm:text-xs tracking-widest">
-                  STEAL PRICE • ₦4,500
+                  STEAL PRICE • ₦5,500
                 </span>
                 <h2 className="text-2xl sm:text-4xl font-black uppercase text-zinc-900 dark:text-white">
                   ROUND NECK POLOS
@@ -177,10 +177,10 @@ export default function Home() {
               <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                 <div>
                   <span className="text-red-600 font-extrabold uppercase text-[10px] sm:text-xs tracking-widest">
-                    STEAL PRICE • ₦4,500
+                    STEAL PRICE • ₦5,500
                   </span>
                   <h2 className="text-2xl sm:text-4xl font-black uppercase text-zinc-900 dark:text-white">
-                    PLAIN TROUSERS
+                    MORE POLO STYLE
                   </h2>
                 </div>
                 <span className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm font-mono">
