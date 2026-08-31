@@ -11,8 +11,12 @@ export interface Product {
   image?: string;
   images?: string[];
   video?: string;
-  videoUrl?: string; // Add this line
+  videoUrl?: string;
   video_url?: string;
+  
+  // Optional cart state properties
+  quantity?: number;
+  selectedSize?: string;
 }
 
 export interface User {
