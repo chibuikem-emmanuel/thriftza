@@ -26,7 +26,7 @@ export default function Logo({ className = '' }: { className?: string }) {
       {/* Brand Name Text */}
       <div className="flex flex-col leading-none">
         <span className="text-2xl font-black tracking-widest text-zinc-900 dark:text-white uppercase font-sans">
-          THRIFT<span className="text-red-600">ZA</span>
+          ZA<span className="text-red-600">WEAR</span>
         </span>
         <span className="text-[9px] font-extrabold tracking-widest text-zinc-400 uppercase">
           STEALS & FITS

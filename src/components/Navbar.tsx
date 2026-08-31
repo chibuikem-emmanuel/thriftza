@@ -84,7 +84,7 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-2xl font-black tracking-tighter text-zinc-900 dark:text-zinc-100 uppercase">
-            THRIFTZA<span className="text-red-600">.</span>
+            ZA<span className="text-red-600">WEAR.</span>
           </Link>
 
           <div className="flex items-center gap-5">

@@ -47,7 +47,7 @@ export default function Preloader({ onComplete }: { onComplete?: () => void }) {
               transition={{ delay: 0.3 }}
               className="text-xs font-mono tracking-widest text-zinc-400 uppercase pt-2"
             >
-              Curating Grade-A Thrift Drops...
+              Curating Grade-A Polo Drops...
             </motion.p>
           </motion.div>
 
