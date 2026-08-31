@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag } from "lucide-react";
+import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag, AlertCircle } from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -27,6 +27,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
   const [bulkMessage, setBulkMessage] = useState<string>(
     "Hello {name}, thank you for choosing Zawear! We have an update regarding your order #{ref}."
@@ -37,19 +38,34 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     setLoading(true);
+    setErrorMsg(null);
     try {
-      const res = await fetch(`${API_URL}/api/orders/admin-list/`);
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setOrders(data);
-        } else {
-          setOrders(data.orders || []);
-          setTotalUsers(data.total_users || 0);
-        }
+      const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin-list/`;
+      
+      const res = await fetch(endpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server status ${res.status}`);
       }
-    } catch (err) {
-      console.error("Failed to fetch orders:", err);
+
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setOrders(data);
+        setTotalUsers(0);
+      } else if (data && typeof data === "object") {
+        setOrders(data.orders || []);
+        setTotalUsers(typeof data.total_users === "number" ? data.total_users : 0);
+      }
+    } catch (err: any) {
+      console.error("Dashboard Fetch Error:", err);
+      setErrorMsg(err.message || "Failed to load dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -114,7 +130,6 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 text-zinc-100 space-y-6">
-      {/* Top Bar Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Zawear Admin Dashboard</h1>
@@ -137,7 +152,13 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Metrics Row */}
+      {errorMsg && (
+        <div className="bg-red-950/50 border border-red-800 text-red-200 p-4 rounded-xl flex items-center gap-3 text-sm">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center justify-between">
           <div>
@@ -160,7 +181,6 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Orders Table */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -257,7 +277,6 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Bulk WhatsApp Modal */}
       {showBulkModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-lg w-full space-y-4">
