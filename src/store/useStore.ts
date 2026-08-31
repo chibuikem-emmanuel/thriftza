@@ -1,20 +1,18 @@
 import { create } from 'zustand';
 
 export interface Product {
-  id: string | number;
+  id: string;
   name?: string;
   title?: string;
   price: number;
+  category?: string;
+  condition?: string;
+  size?: string;
   image?: string;
   images?: string[];
-  category?: string;
-  size?: string;
-  selectedSize?: string;
-  condition?: string;
   video?: string;
+  videoUrl?: string; // Add this line
   video_url?: string;
-  description?: string;
-  quantity?: number;
 }
 
 export interface User {
