@@ -34,6 +34,7 @@ export default function AdminOrdersPage() {
   );
   const [showBulkModal, setShowBulkModal] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://thriftza-back-8vlw.onrender.com";
 
@@ -75,6 +76,33 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    setUpdatingId(id);
+    try {
+      const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/${id}/`;
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to update status. Status: ${res.status}`);
+      }
+
+      setOrders((prev) =>
+        prev.map((order) => (order.id === id ? { ...order, status: newStatus } : order))
+      );
+    } catch (err: any) {
+      console.error("Status Update Error:", err);
+      alert(err.message || "Error updating order status.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const handleDeleteOrder = async (id: number) => {
     if (!confirm("Are you sure you want to delete this order?")) return;
@@ -292,20 +320,23 @@ export default function AdminOrdersPage() {
                       ₦{Number(order.total_amount || 0).toLocaleString()}
                     </td>
                     <td className="p-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+                      <select
+                        disabled={updatingId === order.id}
+                        value={order.status === "SUCCESSFUL" ? "SUCCESSFUL" : "PENDING"}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border bg-zinc-950 focus:outline-none focus:ring-1 cursor-pointer transition disabled:opacity-50 ${
                           order.status === "SUCCESSFUL"
-                            ? "bg-emerald-950/80 text-emerald-400 border border-emerald-800"
-                            : "bg-amber-950/80 text-amber-400 border border-amber-800"
+                            ? "text-emerald-400 border-emerald-800 focus:ring-emerald-500"
+                            : "text-amber-400 border-amber-800 focus:ring-amber-500"
                         }`}
                       >
-                        {order.status === "SUCCESSFUL" ? (
-                          <CheckCircle className="w-3 h-3" />
-                        ) : (
-                          <Clock className="w-3 h-3" />
-                        )}
-                        {order.status}
-                      </span>
+                        <option value="PENDING" className="bg-zinc-900 text-amber-400">
+                          PENDING
+                        </option>
+                        <option value="SUCCESSFUL" className="bg-zinc-900 text-emerald-400">
+                          APPROVED
+                        </option>
+                      </select>
                     </td>
                     <td className="p-4">
                       <div className="flex gap-2">
