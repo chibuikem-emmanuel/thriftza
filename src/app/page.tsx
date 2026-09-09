@@ -13,7 +13,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p1',
     name: 'Vintage Oversized Cotton Polo',
-    price: 5500,
+    price: 1000,
     category: 'Round Neck Polo',
     condition: 'Grade A Polo',
     size: 'L',
@@ -33,7 +33,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p3',
     name: 'Retro Striped Round Neck Tee',
-    price: 5500,
+    price: 1000,
     category: 'Round Neck Polo',
     condition: 'Grade A Polo',
     size: 'XL',
@@ -43,7 +43,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p4',
     name: 'Classic White Athletic Polo',
-    price: 5500,
+    price: 1000,
     category: 'Round Neck Polo',
     condition: 'Grade A Polo',
     size: 'M',
@@ -53,7 +53,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p5',
     name: 'Streetwear Black Graphic Polo',
-    price: 5500,
+    price: 1000,
     category: 'Round Neck Polo',
     condition: 'Like New',
     size: 'L',
@@ -63,7 +63,7 @@ const ROUND_NECK_POLOS: Product[] = [
   {
     id: 'p6',
     name: 'Essential Olive Green Cotton Tee',
-    price: 5500,
+    price: 1000,
     category: 'Round Neck Polo',
     condition: 'Grade A Polo',
     size: 'S',
