@@ -8,7 +8,7 @@ export default function PromoBanner() {
       <div className="flex items-center justify-center gap-6 whitespace-nowrap animate-pulse">
         <span className="flex items-center gap-1.5">
           <Flame className="w-4 h-4 fill-amber-300 text-amber-300 animate-bounce" />
-          EVERYTHING ₦5,500 FLAT RATE
+          EVERYTHING ₦7,500 FLAT RATE
         </span>
         <span className="hidden sm:inline">•</span>
         <span className="hidden sm:flex items-center gap-1.5">
