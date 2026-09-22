@@ -153,7 +153,7 @@ export default function Home() {
             <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
               <div>
                 <span className="text-red-600 font-extrabold uppercase text-[10px] sm:text-xs tracking-widest">
-                  STEAL PRICE • ₦5,500
+                  STEAL PRICE • ₦7,500
                 </span>
                 <h2 className="text-2xl sm:text-4xl font-black uppercase text-zinc-900 dark:text-white">
                   ROUND NECK POLOS
@@ -177,7 +177,7 @@ export default function Home() {
               <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                 <div>
                   <span className="text-red-600 font-extrabold uppercase text-[10px] sm:text-xs tracking-widest">
-                    STEAL PRICE • ₦5,500
+                    STEAL PRICE • ₦7,500
                   </span>
                   <h2 className="text-2xl sm:text-4xl font-black uppercase text-zinc-900 dark:text-white">
                     MORE POLO STYLE

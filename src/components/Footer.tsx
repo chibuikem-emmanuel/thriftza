@@ -9,10 +9,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="space-y-4">
           <Link href="/" className="text-3xl font-black tracking-widest text-red-600 uppercase">
-            THRIFTZA
+            ZAWEAR
           </Link>
           <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-            Curated vintage & thrift streetwear pieces. Elevating everyday fashion with sustainable, authentic apparel.
+            Curated POLO streetwear pieces. Elevating everyday fashion with sustainable, authentic apparel.
           </p>
           <div className="flex gap-4 pt-2">
             <a href="#" className="p-2 bg-zinc-200 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-200 hover:text-red-600 dark:hover:text-red-500 transition">
@@ -64,7 +64,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-zinc-200 dark:border-zinc-800 text-center py-6 text-xs text-zinc-500 font-medium">
-        © {new Date().getFullYear()} THRIFTZA Inc. All rights reserved. Built for style enthusiasts.
+        © {new Date().getFullYear()} ZAWEAR Inc. All rights reserved. Built for style enthusiasts.
       </div>
     </footer>
   );
