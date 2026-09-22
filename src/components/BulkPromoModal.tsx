@@ -51,7 +51,7 @@ export default function BulkPromoModal() {
 
             <div className="my-4 p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
               <p className="text-3xl font-black text-red-500">
-                ₦5,500 <span className="text-sm font-normal text-zinc-400">/ per item</span>
+                ₦7,500 <span className="text-sm font-normal text-zinc-400">/ per item</span>
               </p>
               <p className="text-xs text-zinc-400 font-mono">*Prices subject to change in future drops</p>
             </div>
