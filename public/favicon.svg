@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Dark Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#09090b" />
+      <stop offset="100%" stop-color="#18181b" />
+    </linearGradient>
+
+    <!-- Bold Crimson / Red Gradient -->
+    <linearGradient id="red-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="50%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+
+    <!-- Matte Dark Charcoal Accent -->
+    <linearGradient id="black-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#27272a" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+
+    <!-- Glow Effect for Red Elements -->
+    <filter id="red-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#dc2626" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Outer Card Container -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)" stroke="#27272a" stroke-width="8" />
+
+  <!-- Subtle Red Inner Border -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="url(#red-grad)" stroke-width="3" stroke-opacity="0.3" />
+
+  <!-- Stylized Monogram Z Symbol -->
+  <g filter="url(#red-glow)">
+    <!-- Top Horizontal Bar (Crimson) -->
+    <path d="M 128 148 L 384 148 C 395 148 402 159 396 169 L 366 218 L 128 218 Z" fill="url(#red-grad)" />
+
+    <!-- Diagonal Dynamic Ribbon (Dark Matte Contrast) -->
+    <path d="M 384 170 L 176 342 L 128 342 L 336 170 Z" fill="url(#black-accent)" stroke="#ef4444" stroke-width="2" stroke-opacity="0.5" />
+
+    <!-- Bottom Horizontal Bar (Crimson) -->
+    <path d="M 146 294 L 384 294 C 395 294 402 305 396 315 L 366 364 L 128 364 C 117 364 110 353 116 343 Z" fill="url(#red-grad)" />
+  </g>
+</svg>
