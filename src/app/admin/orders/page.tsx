@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MessageSquare, RefreshCw, Send, CheckCircle, Clock, Users, ShoppingBag, AlertCircle, Trash2 } from "lucide-react";
+import {
+  MessageSquare,
+  RefreshCw,
+  Send,
+  Users,
+  ShoppingBag,
+  AlertCircle,
+  Trash2,
+  Package,
+} from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -9,6 +18,8 @@ interface OrderItem {
   unit_price: string;
   quantity: number;
   size: string;
+  image_url?: string;
+  image?: string;
 }
 
 interface Order {
@@ -36,14 +47,15 @@ export default function AdminOrdersPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://thriftza-back-8vlw.onrender.com";
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "https://thriftza-back-8vlw.onrender.com";
 
   const fetchOrders = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
       const endpoint = `${API_URL.replace(/\/$/, "")}/api/orders/admin/orders/`;
-      
+
       const res = await fetch(endpoint, {
         method: "GET",
         headers: {
@@ -196,13 +208,58 @@ export default function AdminOrdersPage() {
       const text = bulkMessage
         .replace(/{name}/g, order.customer_name || "Customer")
         .replace(/{ref}/g, order.reference);
-      
+
       const url = createWhatsAppUrl(order.customer_phone, text);
       setTimeout(() => {
         window.open(url, "_blank");
       }, index * 800);
     });
     setShowBulkModal(false);
+  };
+
+  // Helper component to resolve image absolute URLs and render item thumbs
+  const OrderItemsDisplay = ({ items }: { items?: OrderItem[] }) => {
+    if (!items || items.length === 0) {
+      return <span className="text-zinc-500 text-xs italic">No items listed</span>;
+    }
+
+    return (
+      <div className="flex flex-col gap-2 max-w-xs">
+        {items.map((item) => {
+          let imgSrc = item.image_url || item.image || "";
+          if (imgSrc && imgSrc.startsWith("/")) {
+            imgSrc = `${API_URL.replace(/\/$/, "")}${imgSrc}`;
+          }
+
+          return (
+            <div key={item.id} className="flex items-center gap-2.5 bg-zinc-950/60 p-1.5 rounded-lg border border-zinc-800/80">
+              <div className="w-10 h-10 rounded-md overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700/50 relative flex items-center justify-center text-zinc-500">
+                {imgSrc ? (
+                  <img
+                    src={imgSrc}
+                    alt={item.product_name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <Package className="w-5 h-5 text-zinc-500" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1 text-xs">
+                <p className="font-medium text-zinc-200 truncate">{item.product_name}</p>
+                <div className="flex items-center gap-2 text-zinc-400 text-[11px]">
+                  <span>Qty: {item.quantity}</span>
+                  {item.size && <span>• Size: {item.size}</span>}
+                  {item.unit_price && <span>• ₦{Number(item.unit_price).toLocaleString()}</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -280,6 +337,7 @@ export default function AdminOrdersPage() {
                 </th>
                 <th className="p-4">Reference</th>
                 <th className="p-4">Customer</th>
+                <th className="p-4">Ordered Items</th>
                 <th className="p-4">Phone</th>
                 <th className="p-4">Amount</th>
                 <th className="p-4">Status</th>
@@ -289,37 +347,40 @@ export default function AdminOrdersPage() {
             <tbody className="divide-y divide-zinc-800">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-zinc-500">
+                  <td colSpan={8} className="p-8 text-center text-zinc-500">
                     Loading order list...
                   </td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-zinc-500">
+                  <td colSpan={8} className="p-8 text-center text-zinc-500">
                     No orders found.
                   </td>
                 </tr>
               ) : (
                 orders.map((order) => (
                   <tr key={order.id} className="hover:bg-zinc-800/40 transition">
-                    <td className="p-4">
+                    <td className="p-4 align-top">
                       <input
                         type="checkbox"
                         checked={selectedOrders.includes(order.id)}
                         onChange={() => toggleSelectOrder(order.id)}
-                        className="rounded bg-zinc-800 border-zinc-700 text-red-600 focus:ring-0"
+                        className="rounded bg-zinc-800 border-zinc-700 text-red-600 focus:ring-0 mt-1"
                       />
                     </td>
-                    <td className="p-4 font-mono font-bold text-zinc-200">{order.reference}</td>
-                    <td className="p-4">
+                    <td className="p-4 align-top font-mono font-bold text-zinc-200">{order.reference}</td>
+                    <td className="p-4 align-top">
                       <div className="font-semibold text-white">{order.customer_name || "Guest"}</div>
                       <div className="text-xs text-zinc-400">{order.customer_email}</div>
                     </td>
-                    <td className="p-4 text-zinc-300">{order.customer_phone || "N/A"}</td>
-                    <td className="p-4 font-bold text-emerald-400">
+                    <td className="p-4 align-top">
+                      <OrderItemsDisplay items={order.items} />
+                    </td>
+                    <td className="p-4 align-top text-zinc-300">{order.customer_phone || "N/A"}</td>
+                    <td className="p-4 align-top font-bold text-emerald-400">
                       ₦{Number(order.total_amount || 0).toLocaleString()}
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 align-top">
                       <select
                         disabled={updatingId === order.id}
                         value={order.status === "SUCCESSFUL" ? "SUCCESSFUL" : "PENDING"}
@@ -338,8 +399,8 @@ export default function AdminOrdersPage() {
                         </option>
                       </select>
                     </td>
-                    <td className="p-4">
-                      <div className="flex gap-2">
+                    <td className="p-4 align-top">
+                      <div className="flex flex-col xl:flex-row gap-2">
                         <button
                           disabled={!order.customer_phone}
                           onClick={() => sendWelcomeWA(order)}
