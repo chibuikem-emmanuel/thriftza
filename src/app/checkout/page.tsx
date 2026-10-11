@@ -136,7 +136,7 @@ export default function CheckoutPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Phone Number</label>
+            <label className="block text-sm font-medium">Whatsapp Number</label>
             <input
               type="tel"
               name="customer_phone"
