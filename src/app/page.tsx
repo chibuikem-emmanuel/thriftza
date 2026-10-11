@@ -72,68 +72,68 @@ const ROUND_NECK_POLOS: Product[] = [
   },
 ];
 
-const PLAIN_TROUSERS: Product[] = [
-  {
-    id: 't1',
-    name: 'Minimalist Straight-Fit Plain Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Grade A Polo',
-    size: '32',
-    images: ['https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
-  },
-  {
-    id: 't2',
-    name: 'Tailored Smart Casual Chino Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Like New',
-    size: '34',
-    images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
-  },
-  {
-    id: 't3',
-    name: 'Relaxed Fit Plain Black Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Grade A Polo',
-    size: '30',
-    images: ['https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
-  },
-  {
-    id: 't4',
-    name: 'Pleated Cream Smart Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Grade A Polo',
-    size: '33',
-    images: ['https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
-  },
-  {
-    id: 't5',
-    name: 'Slim Fit Grey Formal Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Like New',
-    size: '31',
-    images: ['https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
-  },
-  {
-    id: 't6',
-    name: 'Vintage Khaki Everyday Trousers',
-    price: 5500,
-    category: 'Polo',
-    condition: 'Grade A Polo',
-    size: '36',
-    images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=800'],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
-  },
-];
+// const PLAIN_TROUSERS: Product[] = [
+//   {
+//     id: 't1',
+//     name: 'Minimalist Straight-Fit Plain Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Grade A Polo',
+//     size: '32',
+//     images: ['https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
+//   },
+//   {
+//     id: 't2',
+//     name: 'Tailored Smart Casual Chino Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Like New',
+//     size: '34',
+//     images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
+//   },
+//   {
+//     id: 't3',
+//     name: 'Relaxed Fit Plain Black Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Grade A Polo',
+//     size: '30',
+//     images: ['https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
+//   },
+//   {
+//     id: 't4',
+//     name: 'Pleated Cream Smart Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Grade A Polo',
+//     size: '33',
+//     images: ['https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
+//   },
+//   {
+//     id: 't5',
+//     name: 'Slim Fit Grey Formal Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Like New',
+//     size: '31',
+//     images: ['https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
+//   },
+//   {
+//     id: 't6',
+//     name: 'Vintage Khaki Everyday Trousers',
+//     price: 5500,
+//     category: 'Polo',
+//     condition: 'Grade A Polo',
+//     size: '36',
+//     images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=800'],
+//     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
+//   },
+// ];
 
 export default function Home() {
   const [isPreloaderDone, setIsPreloaderDone] = useState(false);
@@ -172,7 +172,7 @@ export default function Home() {
           </section>
 
           {/* Plain Trousers Section */}
-          <section id="trousers" className="bg-zinc-200/60 dark:bg-zinc-900/50 py-10 sm:py-16 transition-colors duration-300">
+          {/* <section id="trousers" className="bg-zinc-200/60 dark:bg-zinc-900/50 py-10 sm:py-16 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                 <div>
@@ -194,7 +194,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           <Footer />
         </>
