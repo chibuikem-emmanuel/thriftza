@@ -17,7 +17,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well',
-    images: ['/products/polo7.jfif'],
+    images: ['/products/polo7.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
   },
   {
@@ -27,7 +27,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well',
-    images: ['/products/polo5.jfif'],
+    images: ['/products/polo5.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
   },
   {
@@ -37,7 +37,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well',
-    images: ['/products/polo4.jfif'],
+    images: ['/products/polo4.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
   },
   {
@@ -47,7 +47,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well',
-    images: ['/products/polo3.jfif'],
+    images: ['/products/polo3.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-street-setting-42023-large.mp4',
   },
   {
@@ -57,7 +57,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Green Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well',
-    images: ['/products/polo2.jfif'],
+    images: ['/products/polo2.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stylish-young-woman-posing-41130-large.mp4',
   },
   {
@@ -67,7 +67,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well ',
-    images: ['/products/polo1.jfif'],
+    images: ['/products/polo1.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
   },
   {
@@ -77,7 +77,7 @@ const ROUND_NECK_POLOS: Product[] = [
     category: 'Round Neck Polo',
     condition: 'New',
     size: 'Elastic and Fits well ',
-    images: ['/products/polo6.jfif'],
+    images: ['/products/polo6.jpg'],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-model-walking-on-a-catwalk-41227-large.mp4',
   },
 ];
