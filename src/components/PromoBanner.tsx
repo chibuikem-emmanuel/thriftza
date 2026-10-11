@@ -13,7 +13,7 @@ export default function PromoBanner() {
         <span className="hidden sm:inline">•</span>
         <span className="hidden sm:flex items-center gap-1.5">
           <Truck className="w-4 h-4" />
-          FREE WAYBILL ON BULK ORDERS
+          FREE WAYBILL ON ORDERS
         </span>
         <span className="hidden md:inline">•</span>
         <span className="hidden md:flex items-center gap-1.5">

@@ -70,8 +70,7 @@ export default function HeroSection() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0"
           >
-            Upgrade your daily fits with quality grade-A round neck polos and tailored plain
-            trousers. Premium thrifted pieces delivered right to your doorstep.
+            Upgrade your daily fits with quality new round neck polos. Premium pieces delivered right to your doorstep.
           </motion.p>
 
           {/* Bulk Special Banner */}
@@ -86,10 +85,10 @@ export default function HeroSection() {
             </div>
             <div>
               <h4 className="font-extrabold text-amber-400 text-xs sm:text-sm uppercase flex items-center gap-1.5">
-                BULK BUYER SPECIAL <Tag className="w-3 h-3" />
+                BUYER SPECIAL <Tag className="w-3 h-3" />
               </h4>
               <p className="text-zinc-300 text-xs sm:text-sm font-medium">
-                Buy in bulk and enjoy{' '}
+                Buy and both in bulk and enjoy{' '}
                 <span className="text-white font-bold underline decoration-amber-400">
                   100% FREE Waybill
                 </span>{' '}
