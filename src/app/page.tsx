@@ -21,7 +21,7 @@ const ROUND_NECK_POLOS: Product[] = [
   //   videoUrl: '/products/video2.mp4',
   // },
   {
-    id: 'p2',
+    id: 'p1',
     name: 'Olive green Round Neck Polo',
     price: 7500,
     category: 'Round Neck Polo',
