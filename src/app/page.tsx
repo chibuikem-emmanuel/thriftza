@@ -10,16 +10,16 @@ import Footer from '@/components/Footer';
 import { Product } from '@/types/product';
 
 const ROUND_NECK_POLOS: Product[] = [
-  {
-    id: 'p1',
-    name: 'Black Round Neck Tee',
-    price: 7500,
-    category: 'Round Neck Polo',
-    condition: 'New',
-    size: 'Elastic and Fits well',
-    images: ['/products/polo7.jpg'],
-    videoUrl: '/products/video2.mp4',
-  },
+  // {
+  //   id: 'p1',
+  //   name: 'Black Round Neck Tee',
+  //   price: 7500,
+  //   category: 'Round Neck Polo',
+  //   condition: 'New',
+  //   size: 'Elastic and Fits well',
+  //   images: ['/products/polo7.jpg'],
+  //   videoUrl: '/products/video2.mp4',
+  // },
   {
     id: 'p2',
     name: 'Olive green Round Neck Polo',
